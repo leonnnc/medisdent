@@ -141,6 +141,12 @@ let config = Store.get('config', {
   availableDays: [1, 2, 3, 4, 5, 6]
 });
 
+// ── SITE-ONLY CODE (index.html) ───────────────────
+// All code below only runs when the main site elements exist
+const IS_SITE = !!document.getElementById('navbar');
+
+if (IS_SITE) {
+
 // ── NAVBAR ───────────────────────────────────────
 window.addEventListener('scroll', () => {
   document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
@@ -587,6 +593,8 @@ async function deleteAppointment(id, firestoreId) {
 // Calendar and agenda rendered after Firebase loads (see initFirebase)
 renderCalendar();
 
+} // end IS_SITE
+
 // ── STAFF DATA ────────────────────────────────────
 let staffMembers = Store.get('staff', [
   { id: 1, name: 'Dr. Alejandro Ríos',   role: 'Odontólogo General & Implantólogo', badge: 'Director',    desc: '15 años de experiencia. Especialista en implantes y rehabilitación oral por la UPCH. Certificado en Implantología Avanzada — ICOI.', tags: ['Implantes','Cirugía','Estética'],   photo: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&q=80' },
@@ -800,33 +808,7 @@ function loadAdminData() {
   });
 }
 
-// Guard: only attach if elements exist (cpanel.html only)
-if (document.getElementById('adSaveGeneral')) {
-  document.getElementById('adSaveGeneral').addEventListener('click', () => {
-    config.clinicName = document.getElementById('adClinicName').value;
-    config.slogan = document.getElementById('adSlogan').value;
-    config.phone = document.getElementById('adPhone').value;
-    config.email = document.getElementById('adEmail').value;
-    config.address = document.getElementById('adAddress').value;
-    config.primaryColor = document.getElementById('adPrimaryColor').value;
-    config.accentColor = document.getElementById('adAccentColor').value;
-    document.documentElement.style.setProperty('--primary', config.primaryColor);
-    document.documentElement.style.setProperty('--accent', config.accentColor);
-    Store.set('config', config);
-    showNotification('✅ Configuración general guardada.', 'success');
-  });
-}
-
-if (document.getElementById('adSaveAppointments')) {
-  document.getElementById('adSaveAppointments').addEventListener('click', () => {
-    config.appointmentDuration = Number(document.getElementById('adApptDuration').value);
-    config.firstSlot = document.getElementById('adFirstSlot').value;
-    config.lastSlot = document.getElementById('adLastSlot').value;
-    config.availableDays = Array.from(document.querySelectorAll('#dayCheckboxes input:checked')).map(cb => Number(cb.value));
-    Store.set('config', config);
-    showNotification('✅ Configuración de citas guardada.', 'success');
-  });
-}
+// Save listeners are now in cpanel.js (imported as ES module)
 
 function renderAdminSlides() {
   const list = document.getElementById('slidesList');
@@ -991,43 +973,47 @@ function showNotification(msg, type = 'success') {
 document.documentElement.style.setProperty('--primary', config.primaryColor);
 document.documentElement.style.setProperty('--accent', config.accentColor);
 
-// ── SMOOTH SCROLL for anchor links ───────────────
-document.querySelectorAll('a[href^="#"]').forEach(a => {
-  a.addEventListener('click', e => {
-    const target = document.querySelector(a.getAttribute('href'));
-    if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+if (IS_SITE) {
+  // ── SMOOTH SCROLL for anchor links ───────────────
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+    });
   });
-});
 
-// ── CONTACT FORM ─────────────────────────────────
-// FIX: validate fields before showing success notification
-document.querySelector('.btn-send').addEventListener('click', () => {
-  const nameEl  = document.querySelector('.contact-form-mini input[type="text"]');
-  const emailEl = document.querySelector('.contact-form-mini input[type="email"]');
-  const msgEl   = document.querySelector('.contact-form-mini textarea');
-
-  const name  = nameEl.value.trim();
-  const email = emailEl.value.trim();
-  const msg   = msgEl.value.trim();
-
-  if (!name || !email || !msg) {
-    showNotification('Por favor completa todos los campos del formulario.', 'error');
-    return;
-  }
-  // Basic email format check
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    showNotification('Por favor ingresa un correo electrónico válido.', 'error');
-    return;
-  }
-
-  // Clear fields after successful "send"
-  nameEl.value  = '';
-  emailEl.value = '';
-  msgEl.value   = '';
-  showNotification('✅ Mensaje enviado. Te contactaremos pronto.', 'success');
-});
+  // ── CONTACT FORM ─────────────────────────────────
+  const btnSend = document.querySelector('.btn-send');
+  if (btnSend) btnSend.addEventListener('click', () => {
+    const nameEl  = document.querySelector('.contact-form-mini input[type="text"]');
+    const emailEl = document.querySelector('.contact-form-mini input[type="email"]');
+    const msgEl   = document.querySelector('.contact-form-mini textarea');
+    const name  = nameEl.value.trim();
+    const email = emailEl.value.trim();
+    const msg   = msgEl.value.trim();
+    if (!name || !email || !msg) {
+      showNotification('Por favor completa todos los campos del formulario.', 'error');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showNotification('Por favor ingresa un correo electrónico válido.', 'error');
+      return;
+    }
+    nameEl.value = ''; emailEl.value = ''; msgEl.value = '';
+    showNotification('✅ Mensaje enviado. Te contactaremos pronto.', 'success');
+  });
+} // end IS_SITE (smooth scroll + contact form)
 
 console.log('DentalPro loaded ✦');
 
 // ── INIT FIREBASE (citas en la nube) ──────────────
 initFirebase();
+
+// ── EXPORTS for cpanel.js ─────────────────────────
+export {
+  Store, config, appointments, slides, staffMembers,
+  loadAdminData, renderAdminSlides, renderAdminAgenda,
+  renderAdminStaff, renderPatientHistory, renderStaff,
+  renderCalendar, renderAgenda, showNotification,
+  fbFetchPatients, flushPendingQueue, getPendingQueue
+};
