@@ -3,20 +3,14 @@
    Full interactivity: carousel, calendar, booking, admin panel
 ═══════════════════════════════════════════════ */
 
+import { Store, config, applyConfig } from './store.js';
+
 // ── SECURITY: sanitize text before inserting into innerHTML ──
 function sanitize(str) {
   const div = document.createElement('div');
   div.textContent = String(str ?? '');
   return div.innerHTML;
 }
-
-// ── STORAGE ──────────────────────────────────────
-const Store = {
-  get: (k, def = null) => {
-    try { const v = localStorage.getItem('dp_' + k); return v ? JSON.parse(v) : def; } catch { return def; }
-  },
-  set: (k, v) => { try { localStorage.setItem('dp_' + k, JSON.stringify(v)); } catch {} }
-};
 
 // Reset slides cache if it's an old version without imgUrl
 const DATA_VERSION = '2';
@@ -126,20 +120,6 @@ async function initFirebase() {
     setTimeout(initFirebase, 30_000);
   }
 }
-
-let config = Store.get('config', {
-  clinicName: 'DentalPro',
-  slogan: 'Tu sonrisa, nuestra pasión',
-  phone: '+51 1 234-5678',
-  email: 'info@dentalpro.pe',
-  address: 'Av. Javier Prado Este 4200, Surco',
-  primaryColor: '#1a6ebf',
-  accentColor: '#c9a84c',
-  appointmentDuration: 90,
-  firstSlot: '08:00',
-  lastSlot: '19:00',
-  availableDays: [1, 2, 3, 4, 5, 6]
-});
 
 // ── SITE-ONLY CODE (index.html) ───────────────────
 // All code below only runs when the main site elements exist
@@ -969,9 +949,9 @@ function showNotification(msg, type = 'success') {
   setTimeout(() => { el.style.display = 'none'; }, 4000);
 }
 
-// ── APPLY SAVED COLORS ────────────────────────────
-document.documentElement.style.setProperty('--primary', config.primaryColor);
-document.documentElement.style.setProperty('--accent', config.accentColor);
+// ── APPLY SAVED COLORS + CONFIG ──────────────────
+// applyConfig is imported from store.js
+applyConfig();
 
 if (IS_SITE) {
   // ── SMOOTH SCROLL for anchor links ───────────────
@@ -1011,7 +991,7 @@ initFirebase();
 
 // ── EXPORTS for cpanel.js ─────────────────────────
 export {
-  Store, config, appointments, slides, staffMembers,
+  slides, staffMembers, appointments,
   loadAdminData, renderAdminSlides, renderAdminAgenda,
   renderAdminStaff, renderPatientHistory, renderStaff,
   renderCalendar, renderAgenda, showNotification,

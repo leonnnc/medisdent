@@ -4,12 +4,16 @@
  * Se ejecuta SOLO en cpanel.html
  */
 
+import { Store, config, applyConfig } from './store.js';
 import {
-  Store, config, slides, staffMembers,
+  slides, staffMembers,
   loadAdminData, renderAdminSlides, renderAdminAgenda,
   renderAdminStaff, renderPatientHistory,
   showNotification, flushPendingQueue
 } from './app.js';
+
+// Apply saved colors immediately on cpanel load
+applyConfig();
 
 // ── NAV SIDEBAR ───────────────────────────────────
 document.querySelectorAll('.cpanel-nav-item[data-section]').forEach(btn => {
@@ -38,16 +42,16 @@ document.getElementById('adSaveGeneral').addEventListener('click', () => {
   config.email      = document.getElementById('adEmail').value.trim();
   config.address    = document.getElementById('adAddress').value.trim();
   Store.set('config', config);
-  showNotification('✅ Información general guardada.', 'success');
+  applyConfig();
+  showNotification('✅ Información general guardada. Los cambios se verán en el sitio al recargar.', 'success');
 });
 
 // ── SAVE COLORS ───────────────────────────────────
 document.getElementById('adSaveColors').addEventListener('click', () => {
   config.primaryColor = document.getElementById('adPrimaryColor').value;
   config.accentColor  = document.getElementById('adAccentColor').value;
-  document.documentElement.style.setProperty('--primary', config.primaryColor);
-  document.documentElement.style.setProperty('--accent',  config.accentColor);
   Store.set('config', config);
+  applyConfig();
   showNotification('✅ Colores guardados.', 'success');
 });
 
