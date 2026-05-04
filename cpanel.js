@@ -1,16 +1,16 @@
 /**
  * DentalPro — cpanel.js
  * Panel de control: lógica de inicialización y eventos
- * Se ejecuta SOLO en cpanel.html
  */
 
-import { Store, config, applyConfig } from './store.js';
+import { Store, config, applyConfig, saveConfigToFirestore } from './store.js';
 import {
   slides, staffMembers,
   loadAdminData, renderAdminSlides, renderAdminAgenda,
   renderAdminStaff, renderPatientHistory,
   showNotification, flushPendingQueue
 } from './app.js';
+import { saveSiteConfig, saveSlides, saveStaff } from './firebase.js';
 
 // Apply saved colors immediately on cpanel load
 applyConfig();
@@ -35,36 +35,46 @@ renderAdminAgenda();
 renderAdminStaff();
 
 // ── SAVE GENERAL ──────────────────────────────────
-document.getElementById('adSaveGeneral').addEventListener('click', () => {
-  config.clinicName = document.getElementById('adClinicName').value.trim();
-  config.slogan     = document.getElementById('adSlogan').value.trim();
-  config.phone      = document.getElementById('adPhone').value.trim();
-  config.email      = document.getElementById('adEmail').value.trim();
-  config.address    = document.getElementById('adAddress').value.trim();
-  Store.set('config', config);
-  applyConfig();
-  showNotification('✅ Información general guardada. Los cambios se verán en el sitio al recargar.', 'success');
+document.getElementById('adSaveGeneral').addEventListener('click', async () => {
+  const btn = document.getElementById('adSaveGeneral');
+  btn.textContent = 'Guardando…'; btn.disabled = true;
+  await saveConfigToFirestore({
+    clinicName: document.getElementById('adClinicName').value.trim(),
+    slogan:     document.getElementById('adSlogan').value.trim(),
+    phone:      document.getElementById('adPhone').value.trim(),
+    email:      document.getElementById('adEmail').value.trim(),
+    address:    document.getElementById('adAddress').value.trim()
+  });
+  btn.textContent = 'Guardar cambios'; btn.disabled = false;
+  showNotification('✅ Información guardada en la nube.', 'success');
 });
 
 // ── SAVE COLORS ───────────────────────────────────
-document.getElementById('adSaveColors').addEventListener('click', () => {
-  config.primaryColor = document.getElementById('adPrimaryColor').value;
-  config.accentColor  = document.getElementById('adAccentColor').value;
-  Store.set('config', config);
-  applyConfig();
-  showNotification('✅ Colores guardados.', 'success');
+document.getElementById('adSaveColors').addEventListener('click', async () => {
+  const btn = document.getElementById('adSaveColors');
+  btn.textContent = 'Guardando…'; btn.disabled = true;
+  await saveConfigToFirestore({
+    primaryColor: document.getElementById('adPrimaryColor').value,
+    accentColor:  document.getElementById('adAccentColor').value
+  });
+  btn.textContent = 'Guardar colores'; btn.disabled = false;
+  showNotification('✅ Colores guardados en la nube.', 'success');
 });
 
 // ── SAVE APPOINTMENTS CONFIG ──────────────────────
-document.getElementById('adSaveAppointments').addEventListener('click', () => {
-  config.appointmentDuration = Number(document.getElementById('adApptDuration').value);
-  config.firstSlot           = document.getElementById('adFirstSlot').value;
-  config.lastSlot            = document.getElementById('adLastSlot').value;
-  config.availableDays       = Array.from(
-    document.querySelectorAll('#dayCheckboxes input:checked')
-  ).map(cb => Number(cb.value));
-  Store.set('config', config);
-  showNotification('✅ Configuración de citas guardada.', 'success');
+document.getElementById('adSaveAppointments').addEventListener('click', async () => {
+  const btn = document.getElementById('adSaveAppointments');
+  btn.textContent = 'Guardando…'; btn.disabled = true;
+  await saveConfigToFirestore({
+    appointmentDuration: Number(document.getElementById('adApptDuration').value),
+    firstSlot:           document.getElementById('adFirstSlot').value,
+    lastSlot:            document.getElementById('adLastSlot').value,
+    availableDays:       Array.from(
+      document.querySelectorAll('#dayCheckboxes input:checked')
+    ).map(cb => Number(cb.value))
+  });
+  btn.textContent = 'Guardar configuración'; btn.disabled = false;
+  showNotification('✅ Configuración de citas guardada en la nube.', 'success');
 });
 
 // ── RETRY PENDING SYNC ────────────────────────────

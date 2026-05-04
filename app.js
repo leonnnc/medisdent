@@ -97,16 +97,34 @@ async function initFirebase() {
     fbFetchPatients     = mod.fetchPatients;
     firebaseReady       = true;
 
-    // Load appointments from Firestore
+    // ── Load site config from Firestore ──
+    const { loadConfigFromFirestore } = await import('./store.js');
+    await loadConfigFromFirestore();
+
+    // ── Load slides from Firestore ──
+    const remoteSlides = await mod.fetchSlides();
+    if (remoteSlides && remoteSlides.length) {
+      slides.length = 0;
+      slides.push(...remoteSlides);
+      if (IS_SITE && typeof buildCarousel === 'function') buildCarousel();
+    }
+
+    // ── Load staff from Firestore ──
+    const remoteStaff = await mod.fetchStaff();
+    if (remoteStaff && remoteStaff.length) {
+      staffMembers.length = 0;
+      staffMembers.push(...remoteStaff);
+      renderStaff();
+    }
+
+    // ── Load appointments from Firestore ──
     appointments = await fbFetchAppointments();
     renderCalendar();
     renderAgenda();
     renderAdminAgenda();
 
-    // Flush any appointments saved offline while Firebase was unavailable
+    // Flush any appointments saved offline
     await flushPendingQueue();
-
-    // Retry pending sync every 60 seconds in case of intermittent connectivity
     setInterval(flushPendingQueue, 60_000);
 
   } catch (e) {
@@ -115,8 +133,6 @@ async function initFirebase() {
     renderCalendar();
     renderAgenda();
     renderAdminAgenda();
-
-    // Retry Firebase every 30 seconds
     setTimeout(initFirebase, 30_000);
   }
 }
@@ -682,6 +698,7 @@ function renderAdminStaff() {
           photo: form.querySelector('.ef-photo').value.trim()
         };
         Store.set('staff', staffMembers);
+        syncStaffToFirestore();
         renderStaff();
         renderAdminStaff();
         showNotification('✅ Miembro actualizado.', 'success');
@@ -693,6 +710,7 @@ function renderAdminStaff() {
       if (staffMembers.length <= 1) { showNotification('Debe haber al menos un miembro.', 'error'); return; }
       staffMembers.splice(idx, 1);
       Store.set('staff', staffMembers);
+      syncStaffToFirestore();
       renderStaff();
       renderAdminStaff();
       showNotification('Miembro eliminado.', 'success');
@@ -716,6 +734,7 @@ if (document.getElementById('addStaffBtn')) {
 
     staffMembers.push({ id: Date.now(), name, role, badge, desc, tags, photo: photo || 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&q=80' });
     Store.set('staff', staffMembers);
+    syncStaffToFirestore();
     renderStaff();
     renderAdminStaff();
 
@@ -820,6 +839,7 @@ function renderAdminSlides() {
     delBtn.addEventListener('click', () => {
       slides.splice(i, 1);
       Store.set('slides', slides);
+      syncSlidesToFirestore();
       buildCarousel();
       renderAdminSlides();
       showNotification('Slide eliminado.', 'success');
@@ -850,6 +870,7 @@ if (document.getElementById('addSlideBtn')) {
 
     slides.push({ id: Date.now(), type, title, subtitle, bg, videoUrl, imgUrl });
     Store.set('slides', slides);
+    syncSlidesToFirestore();
     renderAdminSlides();
     document.getElementById('newSlideTitle').value = '';
     document.getElementById('newSlideSubtitle').value = '';
@@ -995,5 +1016,26 @@ export {
   loadAdminData, renderAdminSlides, renderAdminAgenda,
   renderAdminStaff, renderPatientHistory, renderStaff,
   renderCalendar, renderAgenda, showNotification,
-  fbFetchPatients, flushPendingQueue, getPendingQueue
+  fbFetchPatients, flushPendingQueue, getPendingQueue,
+  syncSlidesToFirestore, syncStaffToFirestore
 };
+
+/** Sync slides array to Firestore (called after any slide change) */
+async function syncSlidesToFirestore() {
+  try {
+    const { saveSlides } = await import('./firebase.js');
+    await saveSlides([...slides]);
+  } catch (e) {
+    console.warn('Could not sync slides to Firestore:', e.message);
+  }
+}
+
+/** Sync staff array to Firestore (called after any staff change) */
+async function syncStaffToFirestore() {
+  try {
+    const { saveStaff } = await import('./firebase.js');
+    await saveStaff([...staffMembers]);
+  } catch (e) {
+    console.warn('Could not sync staff to Firestore:', e.message);
+  }
+}

@@ -1,6 +1,6 @@
 /**
  * DentalPro — firebase.js
- * Firebase Firestore: citas + historial de pacientes
+ * Firebase Firestore: citas + historial de pacientes + config del sitio
  */
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
@@ -11,6 +11,8 @@ import {
   getDocs,
   deleteDoc,
   updateDoc,
+  setDoc,
+  getDoc,
   doc,
   query,
   orderBy,
@@ -32,51 +34,87 @@ const db          = getFirestore(firebaseApp);
 
 const CITAS_COL    = 'citas';
 const PATIENTS_COL = 'pacientes';
+const SITE_DOC     = 'siteData';   // single document in 'settings' collection
+const SETTINGS_COL = 'settings';
+
+// ── SITE CONFIG ───────────────────────────────────
+
+/**
+ * Fetch site config from Firestore.
+ * Returns null if not found (use localStorage defaults).
+ */
+export async function fetchSiteConfig() {
+  const snap = await getDoc(doc(db, SETTINGS_COL, SITE_DOC));
+  return snap.exists() ? snap.data() : null;
+}
+
+/**
+ * Save site config to Firestore (merges with existing).
+ */
+export async function saveSiteConfig(configData) {
+  await setDoc(doc(db, SETTINGS_COL, SITE_DOC), {
+    ...configData,
+    updatedAt: Timestamp.now()
+  });
+}
+
+// ── SLIDES ────────────────────────────────────────
+
+export async function fetchSlides() {
+  const snap = await getDoc(doc(db, SETTINGS_COL, 'slides'));
+  return snap.exists() ? snap.data().slides : null;
+}
+
+export async function saveSlides(slides) {
+  await setDoc(doc(db, SETTINGS_COL, 'slides'), {
+    slides,
+    updatedAt: Timestamp.now()
+  });
+}
+
+// ── STAFF ─────────────────────────────────────────
+
+export async function fetchStaff() {
+  const snap = await getDoc(doc(db, SETTINGS_COL, 'staff'));
+  return snap.exists() ? snap.data().members : null;
+}
+
+export async function saveStaff(members) {
+  await setDoc(doc(db, SETTINGS_COL, 'staff'), {
+    members,
+    updatedAt: Timestamp.now()
+  });
+}
 
 // ── CITAS ─────────────────────────────────────────
 
 /**
  * Guarda una cita y actualiza el historial del paciente.
- * Retorna el firestoreId de la cita.
  */
 export async function saveAppointment(appt) {
-  // 1. Save the appointment
   const docRef = await addDoc(collection(db, CITAS_COL), {
     ...appt,
     syncedAt: Timestamp.now()
   });
   const firestoreId = docRef.id;
-
-  // 2. Upsert patient history
   await upsertPatient(appt, firestoreId);
-
   return firestoreId;
 }
 
-/**
- * Obtiene todas las citas ordenadas por fecha y hora.
- */
 export async function fetchAppointments() {
   const q    = query(collection(db, CITAS_COL), orderBy('date'), orderBy('time'));
   const snap = await getDocs(q);
   return snap.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
 }
 
-/**
- * Elimina una cita por su firestoreId.
- */
 export async function removeAppointment(firestoreId) {
   await deleteDoc(doc(db, CITAS_COL, firestoreId));
 }
 
 // ── PACIENTES / HISTORIAL ─────────────────────────
 
-/**
- * Crea o actualiza el perfil del paciente con la nueva cita.
- * La clave de identificación es el teléfono (normalizado).
- */
 async function upsertPatient(appt, citaFirestoreId) {
-  const phoneKey = appt.phone.replace(/\D/g, ''); // digits only
+  const phoneKey = appt.phone.replace(/\D/g, '');
   const q = query(
     collection(db, PATIENTS_COL),
     where('phoneKey', '==', phoneKey)
@@ -94,7 +132,6 @@ async function upsertPatient(appt, citaFirestoreId) {
   };
 
   if (snap.empty) {
-    // New patient
     await addDoc(collection(db, PATIENTS_COL), {
       name:      appt.name,
       phone:     appt.phone,
@@ -105,7 +142,6 @@ async function upsertPatient(appt, citaFirestoreId) {
       updatedAt: Timestamp.now()
     });
   } else {
-    // Existing patient — append cita
     const patDoc  = snap.docs[0];
     const patData = patDoc.data();
     const citas   = patData.citas || [];
@@ -118,9 +154,6 @@ async function upsertPatient(appt, citaFirestoreId) {
   }
 }
 
-/**
- * Obtiene todos los pacientes con su historial completo.
- */
 export async function fetchPatients() {
   const snap = await getDocs(collection(db, PATIENTS_COL));
   return snap.docs.map(d => ({ patientId: d.id, ...d.data() }));
