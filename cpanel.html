@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DentalPro — Panel de Control</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body { background: var(--dark); min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* ── CPANEL LAYOUT ── */
+    .cpanel-wrapper {
+      display: flex; min-height: 100vh;
+    }
+
+    /* Sidebar nav */
+    .cpanel-sidebar {
+      width: 220px; flex-shrink: 0;
+      background: var(--dark2);
+      border-right: 1px solid rgba(255,255,255,0.08);
+      display: flex; flex-direction: column;
+      padding: 2rem 0;
+      position: fixed; top: 0; left: 0; bottom: 0;
+      z-index: 10;
+    }
+    .cpanel-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem; font-weight: 600; color: var(--white);
+      display: flex; align-items: center; gap: 0.4rem;
+      padding: 0 1.5rem 2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 1.5rem;
+    }
+    .cpanel-logo .logo-mark { color: var(--accent); }
+    .cpanel-nav-item {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.75rem 1.5rem; cursor: pointer;
+      color: rgba(255,255,255,0.5); font-size: 0.875rem; font-weight: 500;
+      transition: all 0.2s; border-left: 3px solid transparent;
+      background: none; border-top: none; border-right: none; border-bottom: none;
+      width: 100%; text-align: left;
+    }
+    .cpanel-nav-item:hover { color: var(--white); background: rgba(255,255,255,0.04); }
+    .cpanel-nav-item.active { color: var(--accent); border-left-color: var(--accent); background: rgba(201,168,76,0.06); }
+    .cpanel-nav-item .nav-icon { font-size: 1.1rem; width: 20px; text-align: center; }
+    .cpanel-back {
+      margin-top: auto; padding: 1rem 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .cpanel-back a {
+      color: rgba(255,255,255,0.4); font-size: 0.8rem; text-decoration: none;
+      display: flex; align-items: center; gap: 0.5rem; transition: color 0.2s;
+    }
+    .cpanel-back a:hover { color: var(--white); }
+
+    /* Main content */
+    .cpanel-main {
+      margin-left: 220px; flex: 1;
+      padding: 2.5rem 3rem;
+      min-height: 100vh;
+    }
+    .cpanel-section { display: none; }
+    .cpanel-section.active { display: block; }
+
+    .cpanel-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem; font-weight: 300; color: var(--white);
+      margin-bottom: 0.5rem;
+    }
+    .cpanel-subtitle {
+      color: rgba(255,255,255,0.4); font-size: 0.875rem; margin-bottom: 2rem;
+    }
+
+    /* Cards grid */
+    .cpanel-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem; margin-bottom: 2rem;
+    }
+    .cpanel-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius); padding: 1.75rem;
+    }
+    .cpanel-card h4 {
+      color: var(--accent); font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.25rem;
+    }
+
+    /* Form fields */
+    .cpanel-field {
+      margin-bottom: 1rem;
+    }
+    .cpanel-field label {
+      display: block; font-size: 0.72rem; color: rgba(255,255,255,0.45);
+      font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+      margin-bottom: 0.4rem;
+    }
+    .cpanel-field input,
+    .cpanel-field select,
+    .cpanel-field textarea {
+      display: block; width: 100%;
+      background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 8px; padding: 0.7rem 1rem;
+      color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 0.875rem;
+      transition: border-color 0.2s;
+    }
+    .cpanel-field input:focus,
+    .cpanel-field select:focus,
+    .cpanel-field textarea:focus { outline: none; border-color: var(--accent); }
+    .cpanel-field input[type="color"] { height: 44px; padding: 4px; cursor: pointer; }
+
+    .cpanel-btn {
+      background: var(--accent); color: var(--dark);
+      border: none; border-radius: 8px; padding: 0.8rem 1.75rem;
+      font-weight: 700; font-size: 0.875rem; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .cpanel-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(201,168,76,0.35); }
+    .cpanel-btn-ghost {
+      background: rgba(255,255,255,0.08); color: var(--white);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 8px; padding: 0.8rem 1.75rem;
+      font-weight: 600; font-size: 0.875rem; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .cpanel-btn-ghost:hover { background: rgba(255,255,255,0.14); }
+
+    /* Day checkboxes */
+    .day-checkboxes {
+      display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;
+    }
+    .day-checkboxes label {
+      display: flex; align-items: center; gap: 0.4rem;
+      font-size: 0.78rem; color: rgba(255,255,255,0.6);
+      text-transform: none; letter-spacing: 0; margin-bottom: 0;
+      background: rgba(255,255,255,0.07); padding: 0.4rem 0.8rem;
+      border-radius: 6px; cursor: pointer;
+    }
+
+    /* Slides list */
+    .slide-admin-item {
+      background: rgba(255,255,255,0.05); border-radius: 10px;
+      padding: 1rem; margin-bottom: 0.75rem;
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .slide-admin-item .slide-title { color: var(--white); font-size: 0.875rem; font-weight: 600; }
+    .slide-type-badge { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 700; text-transform: uppercase; }
+    .slide-type-badge.image { background: rgba(26,110,191,0.3); color: #5ba3e8; }
+    .slide-type-badge.video { background: rgba(231,76,60,0.3); color: #e74c3c; }
+    .slide-delete-btn { background: none; border: none; color: rgba(255,255,255,0.3); cursor: pointer; font-size: 1rem; transition: color 0.2s; }
+    .slide-delete-btn:hover { color: #e74c3c; }
+
+    /* Agenda items */
+    .admin-agenda-item {
+      background: rgba(255,255,255,0.05); border-radius: 8px; padding: 0.75rem;
+      margin-bottom: 0.5rem; border-left: 3px solid var(--accent);
+    }
+    .admin-agenda-item .aai-date { font-size: 0.72rem; color: var(--accent); font-weight: 600; margin-bottom: 0.25rem; }
+    .admin-agenda-item .aai-name { font-size: 0.85rem; color: var(--white); }
+
+    /* Staff admin */
+    .staff-admin-item {
+      background: rgba(255,255,255,0.05); border-radius: 10px;
+      padding: 0.85rem 1rem; margin-bottom: 0.75rem;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .staff-admin-preview { display: flex; align-items: center; gap: 0.75rem; justify-content: space-between; }
+    .staff-admin-preview > div:first-child { display: flex; align-items: center; gap: 0.75rem; }
+    .staff-admin-preview img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid rgba(255,255,255,0.15); }
+    .staff-admin-name { color: var(--white); font-size: 0.875rem; font-weight: 600; }
+    .staff-admin-role { color: rgba(255,255,255,0.45); font-size: 0.75rem; margin-top: 2px; }
+    .staff-admin-actions { display: flex; gap: 0.4rem; flex-shrink: 0; }
+    .staff-edit-btn, .staff-delete-btn { background: none; border: none; cursor: pointer; font-size: 0.95rem; padding: 0.25rem 0.4rem; border-radius: 6px; transition: background 0.2s; }
+    .staff-edit-btn:hover { background: rgba(201,168,76,0.2); }
+    .staff-delete-btn:hover { background: rgba(231,76,60,0.2); }
+    .staff-delete-btn { color: rgba(255,255,255,0.4); }
+    .staff-edit-form { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; gap: 0.6rem; }
+    .staff-edit-form label { font-size: 0.72rem; color: rgba(255,255,255,0.45); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0; }
+    .staff-edit-form input { display: block; width: 100%; margin-top: 0.3rem; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 0.6rem 0.9rem; color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 0.85rem; }
+    .staff-edit-form input:focus { outline: none; border-color: var(--accent); }
+
+    /* Patient history cards */
+    .patient-card {
+      background: rgba(255,255,255,0.04); border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.08); margin-bottom: 0.75rem; overflow: hidden;
+    }
+    .patient-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 1.25rem; cursor: pointer; transition: background 0.2s;
+    }
+    .patient-header:hover { background: rgba(255,255,255,0.04); }
+    .patient-name { color: var(--white); font-weight: 600; font-size: 0.9rem; }
+    .patient-meta { color: rgba(255,255,255,0.4); font-size: 0.75rem; margin-top: 2px; }
+    .patient-stats { display: flex; align-items: center; gap: 0.75rem; }
+    .cita-count { background: rgba(201,168,76,0.15); color: var(--accent); font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 20px; }
+    .patient-chevron { color: rgba(255,255,255,0.3); font-size: 0.7rem; transition: transform 0.2s; }
+    .patient-card.open .patient-chevron { transform: rotate(180deg); }
+    .patient-citas { display: none; padding: 0 1.25rem 1rem; border-top: 1px solid rgba(255,255,255,0.06); }
+    .patient-card.open .patient-citas { display: block; }
+    .patient-cita-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; padding: 0.6rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.8rem; }
+    .patient-cita-row:last-child { border-bottom: none; }
+    .cita-num { background: var(--primary); color: #fff; border-radius: 4px; padding: 0.15rem 0.5rem; font-size: 0.68rem; font-weight: 700; }
+    .cita-date { color: var(--accent); font-weight: 600; }
+    .cita-service { color: var(--white); }
+    .cita-dur { color: rgba(255,255,255,0.4); }
+    .cita-notes { color: rgba(255,255,255,0.5); font-style: italic; width: 100%; }
+    .pending-banner { background: rgba(231,168,0,0.12); border: 1px solid rgba(231,168,0,0.3); border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.82rem; color: #e8a800; display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+
+    /* Responsive */
+    @media(max-width: 768px) {
+    .notification {
+      position: fixed; bottom: 2rem; right: 2rem; z-index: 3000;
+      background: var(--primary); color: var(--white);
+      padding: 1rem 1.5rem; border-radius: 12px;
+      font-weight: 600; font-size: 0.875rem;
+      box-shadow: 0 8px 30px rgba(26,110,191,0.4);
+      animation: slideInRight 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .notification.success { background: #27ae60; }
+    .notification.error   { background: #e74c3c; }
+    @keyframes slideInRight { from { opacity:0; transform:translateX(50px); } to { opacity:1; transform:translateX(0); } }
+
+    /* Image uploader */
+    .img-upload-area {
+      border: 2px dashed rgba(255,255,255,0.2); border-radius: 10px;
+      padding: 1.5rem; text-align: center; cursor: pointer;
+      transition: border-color 0.2s; margin-bottom: 0.75rem;
+      position: relative;
+    }
+    .img-upload-area:hover, .img-upload-area.drag-over { border-color: var(--accent); }
+    .img-upload-area input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .img-upload-area .upload-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+    .img-upload-area p { color: rgba(255,255,255,0.4); font-size: 0.82rem; margin: 0; }
+    .img-preview {
+      width: 100%; height: 140px; object-fit: cover;
+      border-radius: 8px; margin-bottom: 0.75rem; display: none;
+    }
+    .img-url-result {
+      background: rgba(255,255,255,0.07); border-radius: 8px;
+      padding: 0.6rem 0.9rem; font-size: 0.78rem; color: var(--accent);
+      word-break: break-all; display: none; margin-bottom: 0.75rem;
+    }
+    /* Image library */
+    .img-library {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: 0.5rem; max-height: 260px; overflow-y: auto;
+      padding: 0.5rem; background: rgba(0,0,0,0.2); border-radius: 8px;
+    }
+    .img-library-item {
+      position: relative; aspect-ratio: 1; border-radius: 6px; overflow: hidden;
+      cursor: pointer; border: 2px solid transparent; transition: border-color 0.2s;
+    }
+    .img-library-item:hover { border-color: var(--accent); }
+    .img-library-item img { width: 100%; height: 100%; object-fit: cover; }
+    .img-library-item .img-del {
+      position: absolute; top: 2px; right: 2px;
+      background: rgba(231,76,60,0.85); color: #fff; border: none;
+      border-radius: 4px; font-size: 0.65rem; padding: 1px 4px; cursor: pointer;
+      display: none;
+    }
+    .img-library-item:hover .img-del { display: block; }
+    .img-library-empty { color: rgba(255,255,255,0.3); font-size: 0.8rem; padding: 1rem; text-align: center; }
+
+      .cpanel-sidebar { width: 60px; }
+      .cpanel-nav-item span:not(.nav-icon) { display: none; }
+      .cpanel-logo span:last-child { display: none; }
+      .cpanel-main { margin-left: 60px; padding: 1.5rem; }
+      .cpanel-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="cpanel-wrapper">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="cpanel-sidebar">
+    <div class="cpanel-logo">
+      <span class="logo-mark">✦</span>
+      <span>DentalPro</span>
+    </div>
+
+    <button class="cpanel-nav-item active" data-section="general">
+      <span class="nav-icon">⚙️</span><span>General</span>
+    </button>
+    <button class="cpanel-nav-item" data-section="carousel">
+      <span class="nav-icon">🖼️</span><span>Carrusel</span>
+    </button>
+    <button class="cpanel-nav-item" data-section="appointments">
+      <span class="nav-icon">📅</span><span>Citas</span>
+    </button>
+    <button class="cpanel-nav-item" data-section="staff">
+      <span class="nav-icon">👥</span><span>Staff</span>
+    </button>
+    <button class="cpanel-nav-item" data-section="images">
+      <span class="nav-icon">🖼️</span><span>Imágenes</span>
+    </button>
+    <button class="cpanel-nav-item" data-section="historial">
+      <span class="nav-icon">📋</span><span>Historial</span>
+    </button>
+
+    <div class="cpanel-back">
+      <a href="index.html">← Ver sitio web</a>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="cpanel-main">
+
+    <!-- GENERAL -->
+    <section class="cpanel-section active" id="section-general">
+      <h1 class="cpanel-title">Configuración General</h1>
+      <p class="cpanel-subtitle">Información básica de la clínica y apariencia del sitio.</p>
+      <div class="cpanel-grid">
+        <div class="cpanel-card">
+          <h4>Información de la clínica</h4>
+          <div class="cpanel-field"><label>Nombre de la clínica</label><input type="text" id="adClinicName" value="DentalPro" /></div>
+          <div class="cpanel-field"><label>Eslogan</label><input type="text" id="adSlogan" value="Tu sonrisa, nuestra pasión" /></div>
+          <div class="cpanel-field"><label>Teléfono</label><input type="text" id="adPhone" value="+51 1 234-5678" /></div>
+          <div class="cpanel-field"><label>Email</label><input type="email" id="adEmail" value="info@dentalpro.pe" /></div>
+          <div class="cpanel-field"><label>Dirección</label><input type="text" id="adAddress" value="Av. Javier Prado Este 4200, Surco" /></div>
+          <button class="cpanel-btn" id="adSaveGeneral">Guardar cambios</button>
+        </div>
+        <div class="cpanel-card">
+          <h4>Colores del sitio</h4>
+          <div class="cpanel-field"><label>Color principal</label><input type="color" id="adPrimaryColor" value="#1a6ebf" /></div>
+          <div class="cpanel-field"><label>Color acento</label><input type="color" id="adAccentColor" value="#c9a84c" /></div>
+          <p style="color:rgba(255,255,255,0.35);font-size:0.78rem;margin-bottom:1rem">Los colores se aplican en tiempo real al sitio web.</p>
+          <button class="cpanel-btn" id="adSaveColors">Guardar colores</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CAROUSEL -->
+    <section class="cpanel-section" id="section-carousel">
+      <h1 class="cpanel-title">Carrusel Principal</h1>
+      <p class="cpanel-subtitle">Gestiona los slides del hero. Puedes agregar imágenes o videos.</p>
+      <div class="cpanel-grid">
+        <div class="cpanel-card" style="grid-column: 1 / -1">
+          <h4>Slides actuales</h4>
+          <div id="slidesList"></div>
+        </div>
+        <div class="cpanel-card">
+          <h4>Agregar nuevo slide</h4>
+          <div class="cpanel-field"><label>Tipo</label>
+            <select id="newSlideType"><option value="image">Imagen</option><option value="video">Video</option></select>
+          </div>
+          <div class="cpanel-field"><label>Título</label><input type="text" id="newSlideTitle" placeholder="Título del slide" /></div>
+          <div class="cpanel-field"><label>Subtítulo</label><input type="text" id="newSlideSubtitle" placeholder="Descripción breve" /></div>
+          <div class="cpanel-field" id="newSlideVideoLabel" style="display:none"><label>URL del video (MP4)</label><input type="url" id="newSlideVideoUrl" placeholder="https://..." /></div>
+          <div class="cpanel-field"><label>URL de imagen de fondo</label><input type="url" id="newSlideImgUrl" placeholder="https://images.unsplash.com/..." /></div>
+          <div class="cpanel-field"><label>Color de fondo (fallback)</label><input type="color" id="newSlideBg" value="#1a3a5c" /></div>
+          <button class="cpanel-btn" id="addSlideBtn">Agregar slide</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- APPOINTMENTS -->
+    <section class="cpanel-section" id="section-appointments">
+      <h1 class="cpanel-title">Gestión de Citas</h1>
+      <p class="cpanel-subtitle">Configura horarios y revisa las citas registradas.</p>
+      <div class="cpanel-grid">
+        <div class="cpanel-card">
+          <h4>Configuración de horarios</h4>
+          <div class="cpanel-field"><label>Duración de cita (minutos)</label><input type="number" id="adApptDuration" value="90" min="30" max="240" step="15" /></div>
+          <div class="cpanel-field"><label>Primer horario disponible</label><input type="time" id="adFirstSlot" value="08:00" /></div>
+          <div class="cpanel-field"><label>Último horario disponible</label><input type="time" id="adLastSlot" value="19:00" /></div>
+          <div class="cpanel-field">
+            <label>Días disponibles</label>
+            <div class="day-checkboxes" id="dayCheckboxes">
+              <label><input type="checkbox" value="0" /> Dom</label>
+              <label><input type="checkbox" value="1" checked /> Lun</label>
+              <label><input type="checkbox" value="2" checked /> Mar</label>
+              <label><input type="checkbox" value="3" checked /> Mié</label>
+              <label><input type="checkbox" value="4" checked /> Jue</label>
+              <label><input type="checkbox" value="5" checked /> Vie</label>
+              <label><input type="checkbox" value="6" checked /> Sáb</label>
+            </div>
+          </div>
+          <button class="cpanel-btn" id="adSaveAppointments">Guardar configuración</button>
+        </div>
+        <div class="cpanel-card">
+          <h4>Citas registradas</h4>
+          <div id="adminAgenda"><p style="color:rgba(255,255,255,0.35);font-size:0.82rem">No hay citas registradas.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STAFF -->
+    <section class="cpanel-section" id="section-staff">
+      <h1 class="cpanel-title">Equipo Médico</h1>
+      <p class="cpanel-subtitle">Edita la información y fotos del equipo. Los cambios se reflejan en el sitio.</p>
+      <div class="cpanel-grid">
+        <div class="cpanel-card" style="grid-column: 1 / -1">
+          <h4>Miembros del equipo</h4>
+          <div id="staffAdminList"></div>
+        </div>
+        <div class="cpanel-card">
+          <h4>Agregar nuevo miembro</h4>
+          <div class="cpanel-field"><label>Nombre completo</label><input type="text" id="newStaffName" placeholder="Dr. Nombre Apellido" /></div>
+          <div class="cpanel-field"><label>Rol / Especialidad</label><input type="text" id="newStaffRole" placeholder="Odontólogo General" /></div>
+          <div class="cpanel-field"><label>Badge</label><input type="text" id="newStaffBadge" placeholder="Director, Especialista…" /></div>
+          <div class="cpanel-field"><label>Descripción</label><input type="text" id="newStaffDesc" placeholder="Breve descripción profesional" /></div>
+          <div class="cpanel-field"><label>Tags (separados por coma)</label><input type="text" id="newStaffTags" placeholder="Implantes, Cirugía, Estética" /></div>
+          <div class="cpanel-field"><label>URL de la foto</label><input type="url" id="newStaffPhoto" placeholder="https://..." /></div>
+          <button class="cpanel-btn" id="addStaffBtn">Agregar miembro</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- IMAGES -->
+    <section class="cpanel-section" id="section-images">
+      <h1 class="cpanel-title">Biblioteca de Imágenes</h1>
+      <p class="cpanel-subtitle">Sube fotos al servidor. Úsalas en el carrusel y en el staff.</p>
+      <div class="cpanel-grid">
+        <div class="cpanel-card">
+          <h4>Subir nueva imagen</h4>
+          <div class="img-upload-area" id="uploadArea">
+            <input type="file" id="imgFileInput" accept="image/*" />
+            <div class="upload-icon">📁</div>
+            <p>Arrastra una imagen aquí o haz clic para seleccionar<br/><small>JPG, PNG, WEBP, GIF — máx. 10 MB</small></p>
+          </div>
+          <img id="imgPreview" class="img-preview" alt="Preview" />
+          <div id="imgUrlResult" class="img-url-result"></div>
+          <button class="cpanel-btn" id="uploadBtn" style="display:none">⬆️ Subir imagen</button>
+        </div>
+        <div class="cpanel-card" style="grid-column: 1 / -1">
+          <h4>Imágenes guardadas en el servidor</h4>
+          <p style="color:rgba(255,255,255,0.35);font-size:0.78rem;margin-bottom:1rem">
+            Haz clic en una imagen para copiar su URL. Úsala en el carrusel o en el staff.
+          </p>
+          <div class="img-library" id="imgLibrary">
+            <p class="img-library-empty">Cargando imágenes…</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HISTORIAL DE PACIENTES -->
+    <section class="cpanel-section" id="section-historial">
+      <h1 class="cpanel-title">Historial de Pacientes</h1>
+      <p class="cpanel-subtitle">Cada paciente muestra todas sus citas en orden cronológico. Haz clic para expandir.</p>
+      <div id="patientHistory" style="max-width:900px">
+        <p style="color:rgba(255,255,255,0.35);font-size:0.82rem">Cargando…</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div id="notification" class="notification" style="display:none"></div>
+
+<script type="module" src="app.js"></script>
+  // ── CPANEL NAV ──
+  document.querySelectorAll('.cpanel-nav-item[data-section]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.cpanel-nav-item').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.cpanel-section').forEach(s => s.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('section-' + btn.dataset.section).classList.add('active');
+    });
+  });
+
+  // Load data on page open
+  loadAdminData();
+  renderAdminSlides();
+  renderAdminAgenda();
+  renderAdminStaff();
+
+  // Refresh historial when tab is clicked
+  document.querySelectorAll('.cpanel-nav-item[data-section]').forEach(btn => {
+    if (btn.dataset.section === 'historial') {
+      btn.addEventListener('click', () => renderPatientHistory());
+    }
+  });
+
+  // Save colors button (separate from general save)
+  document.getElementById('adSaveColors').addEventListener('click', () => {
+    config.primaryColor = document.getElementById('adPrimaryColor').value;
+    config.accentColor  = document.getElementById('adAccentColor').value;
+    document.documentElement.style.setProperty('--primary', config.primaryColor);
+    document.documentElement.style.setProperty('--accent',  config.accentColor);
+    Store.set('config', config);
+    showNotification('✅ Colores guardados.', 'success');
+  });
+
+  // ── IMAGE UPLOAD ──────────────────────────────────
+  const imgFileInput = document.getElementById('imgFileInput');
+  const imgPreview   = document.getElementById('imgPreview');
+  const imgUrlResult = document.getElementById('imgUrlResult');
+  const uploadBtn    = document.getElementById('uploadBtn');
+  const uploadArea   = document.getElementById('uploadArea');
+  let   selectedFile = null;
+
+  // Drag & drop highlight
+  uploadArea.addEventListener('dragover',  e => { e.preventDefault(); uploadArea.classList.add('drag-over'); });
+  uploadArea.addEventListener('dragleave', ()  => uploadArea.classList.remove('drag-over'));
+  uploadArea.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadArea.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) previewFile(file);
+  });
+
+  imgFileInput.addEventListener('change', () => {
+    if (imgFileInput.files[0]) previewFile(imgFileInput.files[0]);
+  });
+
+  function previewFile(file) {
+    selectedFile = file;
+    const reader = new FileReader();
+    reader.onload = e => {
+      imgPreview.src = e.target.result;
+      imgPreview.style.display = 'block';
+      imgUrlResult.style.display = 'none';
+      uploadBtn.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  uploadBtn.addEventListener('click', async () => {
+    if (!selectedFile) return;
+    uploadBtn.textContent = '⏳ Subiendo…';
+    uploadBtn.disabled = true;
+
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+
+    try {
+      const res  = await fetch('/api/upload', { method: 'POST', body: formData });
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || 'Error al subir');
+
+      imgUrlResult.textContent = data.url;
+      imgUrlResult.style.display = 'block';
+      imgPreview.src = data.url;
+
+      // Copy to clipboard
+      navigator.clipboard.writeText(data.url).catch(() => {});
+      showNotification('✅ Imagen subida. URL copiada al portapapeles.', 'success');
+
+      selectedFile = null;
+      uploadBtn.style.display = 'none';
+      loadImageLibrary();
+    } catch (err) {
+      showNotification('❌ ' + err.message, 'error');
+    } finally {
+      uploadBtn.textContent = '⬆️ Subir imagen';
+      uploadBtn.disabled = false;
+    }
+  });
+
+  // ── IMAGE LIBRARY ─────────────────────────────────
+  async function loadImageLibrary() {
+    const lib = document.getElementById('imgLibrary');
+    lib.innerHTML = '<p class="img-library-empty">Cargando…</p>';
+    try {
+      const res   = await fetch('/api/images');
+      const files = await res.json();
+
+      if (!files.length) {
+        lib.innerHTML = '<p class="img-library-empty">No hay imágenes subidas aún.</p>';
+        return;
+      }
+
+      lib.innerHTML = '';
+      files.forEach(f => {
+        const item = document.createElement('div');
+        item.className = 'img-library-item';
+        item.title = 'Clic para copiar URL';
+        item.innerHTML = `
+          <img src="${f.url}" alt="${f.filename}" loading="lazy" />
+          <button class="img-del" title="Eliminar" data-filename="${f.filename}">✕</button>`;
+
+        // Copy URL on click
+        item.addEventListener('click', e => {
+          if (e.target.classList.contains('img-del')) return;
+          navigator.clipboard.writeText(f.url).catch(() => {});
+          showNotification('📋 URL copiada: ' + f.url, 'success');
+        });
+
+        // Delete image
+        item.querySelector('.img-del').addEventListener('click', async e => {
+          e.stopPropagation();
+          if (!confirm('¿Eliminar esta imagen del servidor?')) return;
+          await fetch('/api/images/' + f.filename, { method: 'DELETE' });
+          loadImageLibrary();
+          showNotification('Imagen eliminada.', 'success');
+        });
+
+        lib.appendChild(item);
+      });
+    } catch {
+      lib.innerHTML = '<p class="img-library-empty">No se pudo conectar con el servidor.</p>';
+    }
+  }
+
+  loadImageLibrary();
+</script>
+</body>
+</html>

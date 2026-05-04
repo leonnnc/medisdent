@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DentalPro — Clínica Dental de Excelencia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ══════════════════════ NAV ══════════════════════ -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="#hero" class="logo">
+      <span class="logo-mark">✦</span>
+      <span>DentalPro</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#services">Servicios</a></li>
+      <li><a href="#gallery">Galería</a></li>
+      <li><a href="#staff">Equipo</a></li>
+      <li><a href="#testimonials">Testimonios</a></li>
+      <li><a href="#calendar">Citas</a></li>
+      <li><a href="#contact">Contacto</a></li>
+    </ul>
+    <a href="#calendar" class="nav-cta">Reservar Cita</a>
+    <button class="hamburger" id="hamburger" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#services">Servicios</a>
+    <a href="#gallery">Galería</a>
+    <a href="#staff">Equipo</a>
+    <a href="#testimonials">Testimonios</a>
+    <a href="#calendar">Citas</a>
+    <a href="#contact">Contacto</a>
+  </div>
+</nav>
+
+<!-- ══════════════════════ HERO CAROUSEL ══════════════════════ -->
+<section id="hero">
+  <div class="carousel" id="carousel">
+    <div class="carousel-track" id="carouselTrack">
+
+      <!-- Slide 1 – imagen -->
+      <div class="carousel-slide" data-type="image">
+        <div class="slide-bg" style="background-image:url('https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=1600&q=80'); background-size:cover; background-position:center;"></div>
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <span class="slide-tag">Bienvenidos</span>
+          <h1>Tu sonrisa,<br/><em>nuestra pasión</em></h1>
+          <p>Tratamientos dentales de vanguardia con la calidez que mereces.</p>
+          <a href="#calendar" class="btn-hero">Agenda tu cita</a>
+        </div>
+        <div class="slide-deco"></div>
+      </div>
+
+      <!-- Slide 2 – imagen -->
+      <div class="carousel-slide" data-type="image">
+        <div class="slide-bg" style="background-image:url('https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=1600&q=80'); background-size:cover; background-position:center;"></div>
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <span class="slide-tag">Tecnología</span>
+          <h1>Diagnóstico<br/><em>digital avanzado</em></h1>
+          <p>Radiografías 3D, escáner intraoral y planificación digital de tu caso.</p>
+          <a href="#services" class="btn-hero">Ver servicios</a>
+        </div>
+        <div class="slide-deco deco-2"></div>
+      </div>
+
+      <!-- Slide 3 – imagen (video placeholder con poster) -->
+      <div class="carousel-slide" data-type="image">
+        <div class="slide-bg" style="background-image:url('https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1600&q=80'); background-size:cover; background-position:center;"></div>
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <span class="slide-tag">Experiencia</span>
+          <h1>Confort y<br/><em>confianza</em></h1>
+          <p>Un ambiente diseñado para que te sientas seguro en cada visita.</p>
+          <a href="#gallery" class="btn-hero">Ver galería</a>
+        </div>
+        <div class="slide-deco deco-3"></div>
+      </div>
+
+      <!-- Slide 4 – imagen -->
+      <div class="carousel-slide" data-type="image">
+        <div class="slide-bg" style="background-image:url('https://images.unsplash.com/photo-1588776814546-ec7e1f6b3b6a?w=1600&q=80'); background-size:cover; background-position:center;"></div>
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <span class="slide-tag">Estética</span>
+          <h1>Sonrisas<br/><em>perfectas</em></h1>
+          <p>Blanqueamiento, carillas y diseño de sonrisa para transformar tu imagen.</p>
+          <a href="#services" class="btn-hero">Saber más</a>
+        </div>
+        <div class="slide-deco deco-3"></div>
+      </div>
+
+      <!-- Slide 5 – imagen -->
+      <div class="carousel-slide" data-type="image">
+        <div class="slide-bg" style="background-image:url('https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=1600&q=80'); background-size:cover; background-position:center top;"></div>
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <span class="slide-tag">Familia</span>
+          <h1>Cuidado para<br/><em>toda la familia</em></h1>
+          <p>Desde los más pequeños hasta los adultos mayores, todos son bienvenidos.</p>
+          <a href="#calendar" class="btn-hero">Reservar ahora</a>
+        </div>
+        <div class="slide-deco deco-4"></div>
+      </div>
+
+    </div><!-- /track -->
+
+    <button class="carousel-btn prev" id="prevBtn" aria-label="Anterior">&#8592;</button>
+    <button class="carousel-btn next" id="nextBtn" aria-label="Siguiente">&#8594;</button>
+
+    <div class="carousel-dots" id="carouselDots"></div>
+    <div class="carousel-progress"><div class="progress-bar" id="progressBar"></div></div>
+  </div>
+</section>
+
+<!-- ══════════════════════ SERVICES ══════════════════════ -->
+<section id="services">
+  <div class="section-header">
+    <span class="section-tag">Lo que ofrecemos</span>
+    <h2>Nuestros <em>Servicios</em></h2>
+    <p>Tratamientos integrales pensados para cuidar tu salud bucal y realzar tu sonrisa.</p>
+  </div>
+  <div class="services-grid">
+    <div class="service-card" data-delay="0">
+      <div class="service-icon">🦷</div>
+      <h3>Ortodoncia</h3>
+      <p>Brackets metálicos, estéticos y alineadores invisibles para una oclusión perfecta.</p>
+      <span class="service-tag">Popular</span>
+    </div>
+    <div class="service-card" data-delay="1">
+      <div class="service-icon">✨</div>
+      <h3>Blanqueamiento</h3>
+      <p>Blanqueamiento dental LED profesional con resultados visibles desde la primera sesión.</p>
+    </div>
+    <div class="service-card" data-delay="2">
+      <div class="service-icon">🔬</div>
+      <h3>Implantes</h3>
+      <p>Implantes de titanio con carga inmediata para recuperar tu sonrisa en tiempo récord.</p>
+    </div>
+    <div class="service-card" data-delay="3">
+      <div class="service-icon">🛡️</div>
+      <h3>Periodoncia</h3>
+      <p>Tratamiento de encías, curetaje y mantenimiento para una salud bucal óptima.</p>
+    </div>
+    <div class="service-card" data-delay="4">
+      <div class="service-icon">👶</div>
+      <h3>Odontopediatría</h3>
+      <p>Atención especializada para niños en un ambiente amigable y seguro.</p>
+    </div>
+    <div class="service-card" data-delay="5">
+      <div class="service-icon">💎</div>
+      <h3>Carillas</h3>
+      <p>Carillas de porcelana y resina para un diseño de sonrisa cinematográfico.</p>
+    </div>
+    <div class="service-card" data-delay="6">
+      <div class="service-icon">🩺</div>
+      <h3>Endodoncia</h3>
+      <p>Tratamiento de conductos con rotativa mecánica, sin dolor y en una sola sesión.</p>
+    </div>
+    <div class="service-card" data-delay="7">
+      <div class="service-icon">📸</div>
+      <h3>Diagnóstico 3D</h3>
+      <p>Tomografía computarizada y escáner intraoral para una planificación precisa.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ GALLERY SCROLL ══════════════════════ -->
+<section id="gallery">
+  <div class="section-header">
+    <span class="section-tag">Antes &amp; Después</span>
+    <h2>Transformaciones <em>Reales</em></h2>
+    <p>Casos clínicos de nuestros pacientes que confiaron en nosotros.</p>
+  </div>
+  <div class="gallery-track-wrap">
+    <div class="gallery-track" id="galleryTrack">
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=600&q=80&auto=format&fit=crop" alt="Ortodoncia" />
+        <div class="gallery-label">Ortodoncia · 18 meses</div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=600&q=80&auto=format&fit=crop" alt="Implante" />
+        <div class="gallery-label">Implante · Carga inmediata</div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=600&q=80&auto=format&fit=crop" alt="Blanqueamiento" />
+        <div class="gallery-label">Blanqueamiento · 1 sesión</div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&q=80&auto=format&fit=crop" alt="Carillas" />
+        <div class="gallery-label">Carillas · Diseño de sonrisa</div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1629909615184-74f495363b67?w=600&q=80&auto=format&fit=crop" alt="Periodoncia" />
+        <div class="gallery-label">Periodoncia · Regeneración</div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=600&q=80&auto=format&fit=crop" alt="Endodoncia" />
+        <div class="gallery-label">Endodoncia · Sin dolor</div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1588776814546-1eab7e3e3e3e?w=600&q=80&auto=format&fit=crop"
+             onerror="this.src='https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=600&q=80&auto=format&fit=crop'"
+             alt="Odontopediatría" />
+        <div class="gallery-label">Pediátrica · Prevención</div>
+      </div>
+    </div>
+  </div>
+  <div class="gallery-controls">
+    <button id="gallPrev" class="gal-btn" aria-label="Anterior imagen">&#8592;</button>
+    <button id="gallNext" class="gal-btn" aria-label="Siguiente imagen">&#8594;</button>
+  </div>
+</section>
+
+<!-- ══════════════════════ STAFF ══════════════════════ -->
+<section id="staff">
+  <div class="section-header">
+    <span class="section-tag">Conoce al equipo</span>
+    <h2>Nuestros <em>Especialistas</em></h2>
+    <p>Profesionales certificados comprometidos con tu bienestar.</p>
+  </div>
+  <!-- Staff cards are rendered dynamically by app.js -->
+  <div class="staff-grid" id="staffGrid"></div>
+</section>
+
+<!-- ══════════════════════ TESTIMONIALS ══════════════════════ -->
+<section id="testimonials">
+  <div class="section-header">
+    <span class="section-tag">Lo dicen nuestros pacientes</span>
+    <h2>Testimonios <em>Verificados</em></h2>
+  </div>
+  <div class="testimonials-slider" id="testimonialsSlider">
+    <div class="testimonial-track" id="testimonialTrack">
+
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p>"El Dr. Ríos me colocó dos implantes y quedé encantada. El proceso fue rápido, sin dolor y el resultado es increíble. Ya recomendé la clínica a toda mi familia."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">LM</div>
+          <div><strong>Lucía Morales</strong><span>Implantes · Lima</span></div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p>"Llevé a mis dos hijos y el trato fue excepcional. Los niños salieron contentos y yo tranquila. La Dra. Soto tiene una paciencia y habilidad que vale oro."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">PM</div>
+          <div><strong>Patricia Medina</strong><span>Odontopediatría · Miraflores</span></div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p>"Tenía miedo al dentista desde niño. Aquí me trataron con tanta consideración que ese miedo desapareció. El blanqueamiento quedó perfecto."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">RG</div>
+          <div><strong>Roberto García</strong><span>Blanqueamiento · San Isidro</span></div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p>"Mis carillas de porcelana transformaron completamente mi sonrisa. Siempre he sido insegura con mis dientes y ahora sonrío con total confianza. ¡Gracias!"</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">AC</div>
+          <div><strong>Andrea Castillo</strong><span>Carillas · Surco</span></div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p>"El tratamiento de conductos con el Dr. Menéndez fue completamente sin dolor. No lo podía creer. Profesional al 100% y la clínica impecable."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">JV</div>
+          <div><strong>Jorge Valdivia</strong><span>Endodoncia · Jesús María</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="testimonial-controls">
+    <button id="testPrev" class="gal-btn" aria-label="Testimonio anterior">&#8592;</button>
+    <div class="testimonial-dots" id="testDots"></div>
+    <button id="testNext" class="gal-btn" aria-label="Testimonio siguiente">&#8594;</button>
+  </div>
+</section>
+
+<!-- ══════════════════════ CALENDAR ══════════════════════ -->
+<section id="calendar">
+  <div class="section-header">
+    <span class="section-tag">Reserva tu espacio</span>
+    <h2>Agenda tu <em>Cita</em></h2>
+    <p>Selecciona un día disponible y elige el horario que más te convenga.</p>
+  </div>
+  <div class="calendar-container">
+    <div class="calendar-panel">
+      <div class="cal-header">
+        <button id="calPrev" class="cal-nav">&#8592;</button>
+        <h3 id="calMonthYear">Mayo 2026</h3>
+        <button id="calNext" class="cal-nav">&#8594;</button>
+      </div>
+      <div class="cal-weekdays">
+        <span>Dom</span><span>Lun</span><span>Mar</span><span>Mié</span>
+        <span>Jue</span><span>Vie</span><span>Sáb</span>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="cal-legend">
+        <span class="legend-dot available"></span> Disponible
+        <span class="legend-dot booked"></span> Ocupado
+        <span class="legend-dot selected"></span> Seleccionado
+      </div>
+    </div>
+
+    <div class="booking-panel" id="bookingPanel">
+      <h3>Detalles de la cita</h3>
+      <p class="selected-date-label" id="selectedDateLabel">Selecciona un día en el calendario</p>
+
+      <div class="time-slots" id="timeSlots"></div>
+
+      <div class="booking-form" id="bookingForm" style="display:none">
+        <input type="text" id="bName" placeholder="Tu nombre completo" />
+        <input type="tel" id="bPhone" placeholder="Teléfono / WhatsApp" />
+        <input type="email" id="bEmail" placeholder="Correo electrónico" />
+        <select id="bService">
+          <option value="">Selecciona un servicio</option>
+          <option>Consulta general</option>
+          <option>Ortodoncia</option>
+          <option>Blanqueamiento</option>
+          <option>Implantes</option>
+          <option>Periodoncia</option>
+          <option>Odontopediatría</option>
+          <option>Carillas</option>
+          <option>Endodoncia</option>
+          <option>Diagnóstico 3D</option>
+        </select>
+        <textarea id="bNotes" placeholder="Notas adicionales (opcional)" rows="3"></textarea>
+        <button id="confirmBtn" class="btn-confirm">Confirmar Reserva</button>
+      </div>
+    </div>
+
+    <div class="agenda-panel">
+      <h3>Agenda del mes</h3>
+      <div class="agenda-list" id="agendaList">
+        <p class="agenda-empty">No hay citas registradas aún.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ CONTACT ══════════════════════ -->
+<section id="contact">
+  <div class="section-header">
+    <span class="section-tag">Estamos aquí</span>
+    <h2>Encuéntranos</h2>
+  </div>
+  <div class="contact-container">
+    <div class="contact-info">
+      <div class="contact-item">
+        <span class="contact-icon">📍</span>
+        <div>
+          <strong>Dirección</strong>
+          <p>Av. Javier Prado Este 4200, Surco, Lima, Perú</p>
+        </div>
+      </div>
+      <div class="contact-item">
+        <span class="contact-icon">📞</span>
+        <div>
+          <strong>Teléfono</strong>
+          <p>+51 1 234-5678<br/>WhatsApp: +51 987 654 321</p>
+        </div>
+      </div>
+      <div class="contact-item">
+        <span class="contact-icon">✉️</span>
+        <div>
+          <strong>Email</strong>
+          <p>info@dentalpro.pe</p>
+        </div>
+      </div>
+      <div class="contact-item">
+        <span class="contact-icon">🕐</span>
+        <div>
+          <strong>Horario</strong>
+          <p>Lunes – Viernes: 8:00 – 20:00<br/>Sábados: 8:00 – 14:00</p>
+        </div>
+      </div>
+      <div class="contact-form-mini">
+        <h4>Envíanos un mensaje</h4>
+        <input type="text" placeholder="Nombre" />
+        <input type="email" placeholder="Email" />
+        <textarea placeholder="Tu mensaje..." rows="3"></textarea>
+        <button class="btn-send">Enviar mensaje</button>
+      </div>
+    </div>
+    <div class="map-wrap">
+      <!-- FIX: updated to real coordinates for Av. Javier Prado Este, Surco, Lima -->
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3901.1!2d-76.9741!3d-12.0931!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105c7b3c5a1b1a1%3A0x1!2sAv.%20Javier%20Prado%20Este%204200%2C%20Santiago%20de%20Surco%2C%20Lima!5e0!3m2!1ses!2spe!4v1"
+        allowfullscreen="" loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        title="Mapa DentalPro — Av. Javier Prado Este 4200, Surco">
+      </iframe>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ FOOTER ══════════════════════ -->
+<footer id="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="logo"><span class="logo-mark">✦</span> DentalPro</div>
+      <p>Clínica dental de excelencia al servicio de tu salud bucal y tu sonrisa.</p>
+      <div class="social-links">
+        <a href="#" aria-label="Facebook">f</a>
+        <a href="#" aria-label="Instagram">ig</a>
+        <a href="#" aria-label="YouTube">yt</a>
+        <a href="#" aria-label="WhatsApp">wa</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h5>Servicios</h5>
+      <ul>
+        <li><a href="#services">Ortodoncia</a></li>
+        <li><a href="#services">Implantes</a></li>
+        <li><a href="#services">Blanqueamiento</a></li>
+        <li><a href="#services">Carillas</a></li>
+        <li><a href="#services">Endodoncia</a></li>
+        <li><a href="#services">Periodoncia</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Clínica</h5>
+      <ul>
+        <li><a href="#staff">Equipo médico</a></li>
+        <li><a href="#gallery">Galería</a></li>
+        <li><a href="#testimonials">Testimonios</a></li>
+        <li><a href="#contact">Contacto</a></li>
+        <li><a href="#calendar">Reservar cita</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Legal</h5>
+      <ul>
+        <li><a href="#">Política de privacidad</a></li>
+        <li><a href="#">Términos de uso</a></li>
+        <li><a href="#">Libro de reclamaciones</a></li>
+      </ul>
+      <div class="footer-certifications">
+        <span>🏥 MINSA Reg. 12345</span>
+        <span>🦷 COP Cert.</span>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 DentalPro. Todos los derechos reservados. | Diseñado con ♥ en Lima, Perú</p>
+  </div>
+</footer>
+
+<div id="notification" class="notification" style="display:none"></div>
+
+<script type="module" src="app.js"></script>
