@@ -358,13 +358,14 @@ function getApptFor(dateStr) {
 
 function renderCalendar() {
   const grid = document.getElementById('calGrid');
+  if (!grid) return;
   const label = document.getElementById('calMonthYear');
   grid.innerHTML = '';
 
   const y = calDate.getFullYear();
   const m = calDate.getMonth();
   const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  label.textContent = `${months[m]} ${y}`;
+  if (label) label.textContent = `${months[m]} ${y}`;
 
   const firstDay = new Date(y, m, 1).getDay();
   const daysInMonth = new Date(y, m + 1, 0).getDate();
@@ -395,7 +396,6 @@ function renderCalendar() {
       dayEl.addEventListener('click', () => selectDay(dateStr, d));
     }
     if (date.toDateString() === today.toDateString()) dayEl.classList.add('today');
-
     grid.appendChild(dayEl);
   }
 }
@@ -405,14 +405,17 @@ function selectDay(dateStr, dayNum) {
   selectedTime = null;
   renderCalendar();
   renderTimeSlots();
-  document.getElementById('bookingForm').style.display = 'none';
+  const bf = document.getElementById('bookingForm');
+  if (bf) bf.style.display = 'none';
   const d = new Date(dateStr + 'T00:00:00');
   const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-  document.getElementById('selectedDateLabel').textContent = d.toLocaleDateString('es-PE', opts);
+  const lbl = document.getElementById('selectedDateLabel');
+  if (lbl) lbl.textContent = d.toLocaleDateString('es-PE', opts);
 }
 
 function renderTimeSlots() {
   const container = document.getElementById('timeSlots');
+  if (!container) return;
   container.innerHTML = '';
   if (!selectedDay) return;
 
@@ -420,7 +423,6 @@ function renderTimeSlots() {
   const existing = getApptFor(selectedDay);
 
   slots.forEach(time => {
-    // FIX: use <button> instead of <div> for keyboard accessibility
     const btn = document.createElement('button');
     btn.className = 'time-slot';
     btn.type = 'button';
@@ -438,99 +440,13 @@ function renderTimeSlots() {
         selectedTime = time;
         document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
         btn.classList.add('selected');
-        document.getElementById('bookingForm').style.display = 'flex';
-        document.getElementById('bookingForm').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        const bf = document.getElementById('bookingForm');
+        if (bf) { bf.style.display = 'flex'; bf.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
       });
     }
     container.appendChild(btn);
   });
 }
-
-document.getElementById('calPrev').addEventListener('click', () => {
-  calDate = new Date(calDate.getFullYear(), calDate.getMonth() - 1, 1);
-  renderCalendar();
-  renderAgenda(); // FIX: update agenda when navigating months
-});
-document.getElementById('calNext').addEventListener('click', () => {
-  calDate = new Date(calDate.getFullYear(), calDate.getMonth() + 1, 1);
-  renderCalendar();
-  renderAgenda(); // FIX: update agenda when navigating months
-});
-
-document.getElementById('confirmBtn').addEventListener('click', async () => {
-  const name    = document.getElementById('bName').value.trim();
-  const phone   = document.getElementById('bPhone').value.trim();
-  const email   = document.getElementById('bEmail').value.trim();
-  const service = document.getElementById('bService').value;
-
-  if (!name || !phone || !service || !selectedDay || !selectedTime) {
-    showNotification('Por favor completa todos los campos requeridos.', 'error');
-    return;
-  }
-
-  // Build appointment — sessionNum = next cita number for this phone
-  const existingForPhone = appointments.filter(a =>
-    a.phone.replace(/\D/g,'') === phone.replace(/\D/g,'')
-  );
-  const sessionNum = existingForPhone.length + 1;
-
-  const appt = {
-    id:         Date.now(),
-    sessionNum,                          // Cita 1, Cita 2, Cita 3…
-    date:       selectedDay,
-    time:       selectedTime,
-    name, phone, email, service,
-    duration:   config.appointmentDuration,
-    notes:      document.getElementById('bNotes').value.trim(),
-    createdAt:  new Date().toISOString(),
-    syncStatus: 'pending'               // will be updated to 'synced' on success
-  };
-
-  const confirmBtn = document.getElementById('confirmBtn');
-  confirmBtn.disabled = true;
-  confirmBtn.textContent = 'Guardando…';
-
-  if (fbSaveAppointment) {
-    // Firebase available — save directly
-    try {
-      const firestoreId = await fbSaveAppointment(appt);
-      appt.firestoreId = firestoreId;
-      appt.syncStatus  = 'synced';
-      appointments = await fbFetchAppointments();
-      showNotification(`✅ Cita ${sessionNum} confirmada para ${selectedDay} a las ${appt.time}`, 'success');
-    } catch (e) {
-      console.error('Firebase save failed, queuing:', e.message);
-      appt.syncStatus = 'pending';
-      addToPendingQueue(appt);
-      appointments.push(appt);
-      Store.set('appointments', appointments);
-      showNotification(`⚠️ Cita guardada localmente. Se sincronizará cuando haya conexión.`, 'success');
-    }
-  } else {
-    // Firebase not ready — queue for later sync
-    appt.syncStatus = 'pending';
-    addToPendingQueue(appt);
-    appointments.push(appt);
-    Store.set('appointments', appointments);
-    showNotification(`⚠️ Cita guardada localmente. Se sincronizará cuando haya conexión.`, 'success');
-  }
-
-  // Reset form
-  document.getElementById('bName').value    = '';
-  document.getElementById('bPhone').value   = '';
-  document.getElementById('bEmail').value   = '';
-  document.getElementById('bService').value = '';
-  document.getElementById('bNotes').value   = '';
-  document.getElementById('bookingForm').style.display = 'none';
-  selectedTime = null;
-  confirmBtn.disabled = false;
-  confirmBtn.textContent = 'Confirmar Reserva';
-
-  renderCalendar();
-  renderTimeSlots();
-  renderAgenda();
-  renderAdminAgenda();
-});
 
 function renderAgenda() {
   const list = document.getElementById('agendaList');
@@ -548,8 +464,8 @@ function renderAgenda() {
   list.innerHTML = monthly.map(a => {
     const sessionLabel = a.sessionNum ? `Cita #${a.sessionNum}` : 'Cita';
     const syncBadge    = a.syncStatus === 'pending'
-      ? `<span class="sync-badge pending" title="Pendiente de sincronizar con la nube">⏳ Pendiente</span>`
-      : `<span class="sync-badge synced" title="Guardada en la nube">☁️ Nube</span>`;
+      ? `<span class="sync-badge pending">⏳ Pendiente</span>`
+      : `<span class="sync-badge synced">☁️ Nube</span>`;
     return `
     <div class="agenda-item">
       <button class="ai-delete" data-id="${a.id}" data-fsid="${a.firestoreId || ''}" title="Eliminar">✕</button>
@@ -586,10 +502,85 @@ async function deleteAppointment(id, firestoreId) {
   showNotification('Cita eliminada.', 'success');
 }
 
-// Calendar and agenda rendered after Firebase loads (see initFirebase)
-renderCalendar();
+// ── CALENDAR EVENT LISTENERS (site only) ─────────
+if (IS_SITE) {
+  const calPrevBtn = document.getElementById('calPrev');
+  const calNextBtn = document.getElementById('calNext');
+  const confirmBtn = document.getElementById('confirmBtn');
 
-} // end IS_SITE
+  if (calPrevBtn) calPrevBtn.addEventListener('click', () => {
+    calDate = new Date(calDate.getFullYear(), calDate.getMonth() - 1, 1);
+    renderCalendar(); renderAgenda();
+  });
+  if (calNextBtn) calNextBtn.addEventListener('click', () => {
+    calDate = new Date(calDate.getFullYear(), calDate.getMonth() + 1, 1);
+    renderCalendar(); renderAgenda();
+  });
+
+  if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+    const name    = document.getElementById('bName').value.trim();
+    const phone   = document.getElementById('bPhone').value.trim();
+    const email   = document.getElementById('bEmail').value.trim();
+    const service = document.getElementById('bService').value;
+
+    if (!name || !phone || !service || !selectedDay || !selectedTime) {
+      showNotification('Por favor completa todos los campos requeridos.', 'error');
+      return;
+    }
+
+    const existingForPhone = appointments.filter(a =>
+      a.phone.replace(/\D/g,'') === phone.replace(/\D/g,'')
+    );
+    const sessionNum = existingForPhone.length + 1;
+
+    const appt = {
+      id: Date.now(), sessionNum,
+      date: selectedDay, time: selectedTime,
+      name, phone, email, service,
+      duration:   config.appointmentDuration,
+      notes:      document.getElementById('bNotes').value.trim(),
+      createdAt:  new Date().toISOString(),
+      syncStatus: 'pending'
+    };
+
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = 'Guardando…';
+
+    if (fbSaveAppointment) {
+      try {
+        const firestoreId = await fbSaveAppointment(appt);
+        appt.firestoreId = firestoreId;
+        appt.syncStatus  = 'synced';
+        appointments = await fbFetchAppointments();
+        showNotification(`✅ Cita ${sessionNum} confirmada para ${selectedDay} a las ${appt.time}`, 'success');
+      } catch (e) {
+        appt.syncStatus = 'pending';
+        addToPendingQueue(appt);
+        appointments.push(appt);
+        Store.set('appointments', appointments);
+        showNotification(`⚠️ Cita guardada localmente. Se sincronizará pronto.`, 'success');
+      }
+    } else {
+      appt.syncStatus = 'pending';
+      addToPendingQueue(appt);
+      appointments.push(appt);
+      Store.set('appointments', appointments);
+      showNotification(`⚠️ Cita guardada localmente. Se sincronizará pronto.`, 'success');
+    }
+
+    ['bName','bPhone','bEmail','bService','bNotes'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('bookingForm').style.display = 'none';
+    selectedTime = null;
+    confirmBtn.disabled = false;
+    confirmBtn.textContent = 'Confirmar Reserva';
+
+    renderCalendar(); renderTimeSlots(); renderAgenda(); renderAdminAgenda();
+  });
+
+  renderCalendar();
+} // end IS_SITE calendar listeners
 
 // ── STAFF DATA ────────────────────────────────────
 let staffMembers = Store.get('staff', [
