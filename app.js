@@ -1001,17 +1001,9 @@ console.log('DentalPro loaded ✦');
 // ── INIT FIREBASE (citas en la nube) ──────────────
 initFirebase();
 
-// ── EXPORTS for cpanel.js ─────────────────────────
-export {
-  slides, staffMembers, appointments,
-  loadAdminData, renderAdminSlides, renderAdminAgenda,
-  renderAdminStaff, renderPatientHistory, renderStaff,
-  renderCalendar, renderAgenda, showNotification,
-  fbFetchPatients, flushPendingQueue, getPendingQueue,
-  syncSlidesToFirestore, syncStaffToFirestore
-};
+// ── FIRESTORE SYNC HELPERS ────────────────────────
 
-/** Sync slides array to Firestore (called after any slide change) */
+/** Sync slides array to Firestore */
 async function syncSlidesToFirestore() {
   try {
     const { saveSlides } = await import('./firebase.js');
@@ -1021,7 +1013,7 @@ async function syncSlidesToFirestore() {
   }
 }
 
-/** Sync staff array to Firestore (called after any staff change) */
+/** Sync staff array to Firestore */
 async function syncStaffToFirestore() {
   try {
     const { saveStaff } = await import('./firebase.js');
@@ -1030,3 +1022,13 @@ async function syncStaffToFirestore() {
     console.warn('Could not sync staff to Firestore:', e.message);
   }
 }
+
+// ── EXPORTS for cpanel.js ─────────────────────────
+export {
+  slides, staffMembers, appointments,
+  loadAdminData, renderAdminSlides, renderAdminAgenda,
+  renderAdminStaff, renderPatientHistory, renderStaff,
+  renderCalendar, renderAgenda, showNotification,
+  fbFetchPatients, flushPendingQueue, getPendingQueue,
+  syncSlidesToFirestore, syncStaffToFirestore
+};
