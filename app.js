@@ -327,6 +327,8 @@ document.getElementById('testNext').addEventListener('click', () => goToTestimon
 buildTestDots();
 setInterval(() => goToTestimonial(testimonialIdx + 1), 7000);
 
+} // end IS_SITE (navbar, carousel, gallery, testimonials)
+
 // ── CALENDAR ─────────────────────────────────────
 let calDate = new Date();
 let selectedDay = null;
