@@ -3,14 +3,13 @@
  * Panel de control: lógica de inicialización y eventos
  */
 
-import { Store, config, applyConfig, saveConfigToFirestore } from './store.js';
+import { config, applyConfig, saveConfigToFirestore } from './store.js';
 import {
   slides, staffMembers,
   loadAdminData, renderAdminSlides, renderAdminAgenda,
   renderAdminStaff, renderPatientHistory,
   showNotification, flushPendingQueue
 } from './app.js';
-import { saveSiteConfig, saveSlides, saveStaff } from './firebase.js';
 
 // Apply saved colors immediately on cpanel load
 applyConfig();

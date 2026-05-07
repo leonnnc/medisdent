@@ -209,8 +209,7 @@
     .cita-notes { color: rgba(255,255,255,0.5); font-style: italic; width: 100%; }
     .pending-banner { background: rgba(231,168,0,0.12); border: 1px solid rgba(231,168,0,0.3); border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.82rem; color: #e8a800; display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
 
-    /* Responsive */
-    @media(max-width: 768px) {
+    /* Notification */
     .notification {
       position: fixed; bottom: 2rem; right: 2rem; z-index: 3000;
       background: var(--primary); color: var(--white);
@@ -266,6 +265,8 @@
     .img-library-item:hover .img-del { display: block; }
     .img-library-empty { color: rgba(255,255,255,0.3); font-size: 0.8rem; padding: 1rem; text-align: center; }
 
+    /* Responsive */
+    @media(max-width: 768px) {
       .cpanel-sidebar { width: 60px; }
       .cpanel-nav-item span:not(.nav-icon) { display: none; }
       .cpanel-logo span:last-child { display: none; }
