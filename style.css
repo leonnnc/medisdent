@@ -23,13 +23,21 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; }
+/* ── FULL-PAGE SCROLL ── */
+html {
+  scroll-behavior: smooth;
+  /* scroll-snap on the root */
+  scroll-snap-type: y mandatory;
+  overflow-y: scroll;
+  height: 100%;
+}
 
 body {
   font-family: 'DM Sans', sans-serif;
   background: var(--light);
   color: var(--text);
   overflow-x: hidden;
+  height: 100%;
 }
 
 /* ─── SCROLLBAR ─── */
@@ -97,8 +105,9 @@ body {
 #hero {
   height: 100vh; min-height: 600px; position: relative;
   overflow: hidden;
-  /* Reset the generic section padding so the carousel fills edge-to-edge */
   padding: 0 !important;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 .carousel { width: 100%; height: 100%; position: relative; overflow: hidden; }
@@ -213,8 +222,16 @@ body {
 }
 
 /* ══════════════════════ SECTIONS COMMON ══════════════════════ */
-section {
-  padding: 7rem 2rem;
+section, #footer {
+  /* Each section snaps to viewport */
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5rem 2rem;
+  overflow: hidden;
 }
 .section-header {
   text-align: center; max-width: 700px; margin: 0 auto 4rem;
@@ -557,9 +574,7 @@ section {
 /* ══════════════════════ CONTACT ══════════════════════ */
 #contact {
   background: var(--white);
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-  padding-bottom: 0 !important;
+  padding: 0 !important;   /* map fills full height, info panel has its own padding */
 }
 .contact-container {
   display: grid; grid-template-columns: 1fr 1.5fr;
@@ -620,7 +635,15 @@ section {
 }
 
 /* ══════════════════════ FOOTER ══════════════════════ */
-#footer { background: var(--dark); color: rgba(255,255,255,0.6); }
+#footer {
+  background: var(--dark); color: rgba(255,255,255,0.6);
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 .footer-inner {
   max-width: 1300px; margin: 0 auto;
   display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
@@ -844,18 +867,35 @@ section {
 
 /* ══════════════════════ RESPONSIVE ══════════════════════ */
 @media(max-width: 768px) {
-  section { padding: 5rem 1.25rem; }
+  section, #footer { padding: 4rem 1.25rem; }
   .services-grid { grid-template-columns: 1fr 1fr; }
   .staff-card { flex-direction: column; }
   .staff-photo-wrap { width: 100%; height: 200px; }
-  .gallery-item { min-width: 260px; height: 320px; }
   .carousel-btn { width: 40px; height: 40px; font-size: 1rem; }
   .prev { left: 0.75rem; }
   .next { right: 0.75rem; }
+  #contact { padding: 0 !important; }
+  #hero { padding: 0 !important; }
 }
 @media(max-width: 480px) {
   .services-grid { grid-template-columns: 1fr; }
 }
+
+/* ══════════════════════ SECTION DOT NAVIGATION ══════════════════════ */
+.section-dots {
+  position: fixed; right: 1.25rem; top: 50%; transform: translateY(-50%);
+  z-index: 500; display: flex; flex-direction: column; gap: 0.5rem;
+}
+.section-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(255,255,255,0.3); border: none; cursor: pointer;
+  transition: all 0.3s; padding: 0;
+}
+.section-dot.active {
+  background: var(--accent);
+  height: 24px; border-radius: 4px;
+}
+@media(max-width: 768px) { .section-dots { display: none; } }
 
 /* ══════════════════════ SCROLL ANIMATIONS ══════════════════════ */
 .reveal {
