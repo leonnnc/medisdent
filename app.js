@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   DentalPro — app.js
+   app.js
    Full interactivity: carousel, calendar, booking, admin panel
 ═══════════════════════════════════════════════ */
 
@@ -584,13 +584,7 @@ if (IS_SITE) {
 } // end IS_SITE calendar listeners
 
 // ── STAFF DATA ────────────────────────────────────
-let staffMembers = Store.get('staff', [
-  { id: 1, name: 'Dr. Alejandro Ríos',   role: 'Odontólogo General & Implantólogo', badge: 'Director',    desc: '15 años de experiencia. Especialista en implantes y rehabilitación oral por la UPCH. Certificado en Implantología Avanzada — ICOI.', tags: ['Implantes','Cirugía','Estética'],   photo: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&q=80' },
-  { id: 2, name: 'Dra. Valeria Soto',    role: 'Ortodoncista',                       badge: 'Especialista', desc: 'Especialista en Ortodoncia por la PUCP. Certificada en alineadores Invisalign y técnica de arco recto prescripción MBT.',           tags: ['Ortodoncia','Invisalign'],          photo: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&q=80' },
-  { id: 3, name: 'Dr. Carlos Menéndez',  role: 'Endodoncista',                       badge: 'Especialista', desc: 'Posgrado en Endodoncia, UNMSM. Tratamiento de conductos con tecnología rotativa de última generación.',                           tags: ['Endodoncia','Dolor dental'],        photo: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=400&q=80' },
-  { id: 4, name: 'Sofía Vargas',         role: 'Asistente Dental Senior',            badge: '',             desc: '8 años apoyando procedimientos clínicos. Especialista en esterilización y asistencia en cirugías implantológicas.',               tags: ['Asistencia','Esterilización'],      photo: 'https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=400&q=80' },
-  { id: 5, name: 'María Torres',         role: 'Recepcionista & Coordinadora',       badge: '',             desc: 'Gestión de agenda, atención al paciente y coordinación de tratamientos con más de 5 años en la clínica.',                         tags: ['Atención','Agenda'],               photo: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=400&q=80' }
-]);
+let staffMembers = Store.get('staff', []);
 
 // Render staff cards on the public page
 function renderStaff() {
@@ -973,7 +967,7 @@ if (IS_SITE) {
   });
 } // end IS_SITE (smooth scroll + contact form)
 
-console.log('DentalPro loaded ✦');
+console.log('Clínica cargada ✦');
 
 // ── INIT FIREBASE (citas en la nube) ──────────────
 initFirebase();

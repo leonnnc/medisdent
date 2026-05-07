@@ -1,5 +1,5 @@
 /**
- * DentalPro — cpanel.js
+ * cpanel.js
  * Panel de control: lógica de inicialización y eventos
  */
 

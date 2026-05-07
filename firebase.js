@@ -1,5 +1,5 @@
 /**
- * DentalPro — firebase.js
+ * firebase.js
  * Firebase Firestore: citas + historial de pacientes + config del sitio
  */
 

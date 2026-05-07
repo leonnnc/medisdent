@@ -1,5 +1,5 @@
 /**
- * DentalPro — store.js
+ * store.js
  * Config compartido — Firestore es la fuente de verdad.
  * localStorage solo se usa como caché de lectura rápida al inicio.
  */
@@ -17,11 +17,11 @@ export const Store = _cache;
 
 // ── Valores por defecto ───────────────────────────
 const DEFAULTS = {
-  clinicName:          'DentalPro',
-  slogan:              'Tu sonrisa, nuestra pasión',
-  phone:               '+51 1 234-5678',
-  email:               'info@dentalpro.pe',
-  address:             'Av. Javier Prado Este 4200, Surco',
+  clinicName:          '',
+  slogan:              '',
+  phone:               '',
+  email:               '',
+  address:             '',
   primaryColor:        '#1a6ebf',
   accentColor:         '#c9a84c',
   appointmentDuration: 90,
