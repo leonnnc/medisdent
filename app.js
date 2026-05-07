@@ -739,8 +739,6 @@ if (document.getElementById('addStaffBtn')) {
   });
 }
 
-renderStaff();
-
 // ── SCROLL REVEAL ─────────────────────────────────
 // Note: .gallery-item is excluded — it's inside overflow:hidden containers
 // and the translateY reveal would clip them. They're always visible.
@@ -752,7 +750,7 @@ const revealObs = new IntersectionObserver((entries) => {
 }, { threshold: 0.12 });
 revealEls.forEach(el => revealObs.observe(el));
 
-// Re-render staff now that revealObs exists so cards get scroll-reveal
+// Render staff now that revealObs exists so cards get scroll-reveal
 renderStaff();
 
 // ── ADMIN DATA LOADER ─────────────────────────────
