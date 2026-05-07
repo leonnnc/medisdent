@@ -754,47 +754,21 @@ revealEls.forEach(el => revealObs.observe(el));
 // Re-render staff now that revealObs exists so cards get scroll-reveal
 renderStaff();
 
-// ── ADMIN PANEL ───────────────────────────────────
-// Only runs on cpanel.html where these elements exist
-const adminPanel  = document.getElementById('adminPanel');
-const adminToggle = document.getElementById('adminToggle');
-const adminClose  = document.getElementById('adminClose');
-
-if (adminToggle) {
-  adminToggle.addEventListener('click', () => {
-    adminPanel.style.display = adminPanel.style.display === 'none' ? 'block' : 'none';
-    if (adminPanel.style.display === 'block') {
-      loadAdminData();
-      renderAdminSlides();
-      renderAdminAgenda();
-      renderAdminStaff();
-    }
-  });
-  adminClose.addEventListener('click', () => { adminPanel.style.display = 'none'; });
-
-  // Tab switching
-  document.querySelectorAll('.admin-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.admin-content').forEach(c => c.style.display = 'none');
-      tab.classList.add('active');
-      document.getElementById('tab-' + tab.dataset.tab).style.display = 'block';
-    });
-  });
-}
-
+// ── ADMIN DATA LOADER ─────────────────────────────
+// Used by cpanel.js to populate form fields
 function loadAdminData() {
-  document.getElementById('adClinicName').value = config.clinicName;
-  document.getElementById('adSlogan').value = config.slogan;
-  document.getElementById('adPhone').value = config.phone;
-  document.getElementById('adEmail').value = config.email;
-  document.getElementById('adAddress').value = config.address;
-  document.getElementById('adPrimaryColor').value = config.primaryColor;
-  document.getElementById('adAccentColor').value = config.accentColor;
-  document.getElementById('adApptDuration').value = config.appointmentDuration;
-  document.getElementById('adFirstSlot').value = config.firstSlot;
-  document.getElementById('adLastSlot').value = config.lastSlot;
-
+  const f = (id) => document.getElementById(id);
+  if (!f('adClinicName')) return; // not on cpanel page
+  f('adClinicName').value  = config.clinicName;
+  f('adSlogan').value      = config.slogan;
+  f('adPhone').value       = config.phone;
+  f('adEmail').value       = config.email;
+  f('adAddress').value     = config.address;
+  f('adPrimaryColor').value = config.primaryColor;
+  f('adAccentColor').value  = config.accentColor;
+  f('adApptDuration').value = config.appointmentDuration;
+  f('adFirstSlot').value   = config.firstSlot;
+  f('adLastSlot').value    = config.lastSlot;
   document.querySelectorAll('#dayCheckboxes input').forEach(cb => {
     cb.checked = config.availableDays.includes(Number(cb.value));
   });
