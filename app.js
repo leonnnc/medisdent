@@ -938,6 +938,10 @@ function showNotification(msg, type = 'success') {
 // applyConfig is imported from store.js
 applyConfig();
 
+// Set current year in footer
+const footerYearEl = document.getElementById('footerYear');
+if (footerYearEl) footerYearEl.textContent = new Date().getFullYear();
+
 if (IS_SITE) {
   // ── SMOOTH SCROLL for anchor links ───────────────
   document.querySelectorAll('a[href^="#"]').forEach(a => {
