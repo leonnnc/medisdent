@@ -182,7 +182,6 @@ function buildCarousel() {
         </video>
         <div class="video-overlay"></div>
         <div class="slide-content">
-          <span class="slide-tag">Video</span>
           <h1>${sanitize(slide.title)}</h1>
           <p>${sanitize(slide.subtitle)}</p>
           <a href="#calendar" class="btn-hero">Reservar cita</a>
@@ -196,7 +195,6 @@ function buildCarousel() {
         <div class="slide-bg" style="${bgStyle}"></div>
         <div class="slide-overlay"></div>
         <div class="slide-content">
-          <span class="slide-tag">${sanitize(config.clinicName || 'DentalPro')}</span>
           <h1>${sanitize(slide.title)}</h1>
           <p>${sanitize(slide.subtitle)}</p>
           <a href="#calendar" class="btn-hero">Reservar cita</a>
