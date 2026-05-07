@@ -37,43 +37,58 @@ renderAdminStaff();
 document.getElementById('adSaveGeneral').addEventListener('click', async () => {
   const btn = document.getElementById('adSaveGeneral');
   btn.textContent = 'Guardando…'; btn.disabled = true;
-  await saveConfigToFirestore({
-    clinicName: document.getElementById('adClinicName').value.trim(),
-    slogan:     document.getElementById('adSlogan').value.trim(),
-    phone:      document.getElementById('adPhone').value.trim(),
-    email:      document.getElementById('adEmail').value.trim(),
-    address:    document.getElementById('adAddress').value.trim()
-  });
-  btn.textContent = 'Guardar cambios'; btn.disabled = false;
-  showNotification('✅ Información guardada en la nube.', 'success');
+  try {
+    await saveConfigToFirestore({
+      clinicName: document.getElementById('adClinicName').value.trim(),
+      slogan:     document.getElementById('adSlogan').value.trim(),
+      phone:      document.getElementById('adPhone').value.trim(),
+      email:      document.getElementById('adEmail').value.trim(),
+      address:    document.getElementById('adAddress').value.trim()
+    });
+    showNotification('✅ Información guardada en Firestore.', 'success');
+  } catch (e) {
+    showNotification('❌ Error al guardar: ' + e.message, 'error');
+  } finally {
+    btn.textContent = 'Guardar cambios'; btn.disabled = false;
+  }
 });
 
 // ── SAVE COLORS ───────────────────────────────────
 document.getElementById('adSaveColors').addEventListener('click', async () => {
   const btn = document.getElementById('adSaveColors');
   btn.textContent = 'Guardando…'; btn.disabled = true;
-  await saveConfigToFirestore({
-    primaryColor: document.getElementById('adPrimaryColor').value,
-    accentColor:  document.getElementById('adAccentColor').value
-  });
-  btn.textContent = 'Guardar colores'; btn.disabled = false;
-  showNotification('✅ Colores guardados en la nube.', 'success');
+  try {
+    await saveConfigToFirestore({
+      primaryColor: document.getElementById('adPrimaryColor').value,
+      accentColor:  document.getElementById('adAccentColor').value
+    });
+    showNotification('✅ Colores guardados en Firestore.', 'success');
+  } catch (e) {
+    showNotification('❌ Error al guardar colores: ' + e.message, 'error');
+  } finally {
+    btn.textContent = 'Guardar colores'; btn.disabled = false;
+  }
 });
 
 // ── SAVE APPOINTMENTS CONFIG ──────────────────────
 document.getElementById('adSaveAppointments').addEventListener('click', async () => {
   const btn = document.getElementById('adSaveAppointments');
   btn.textContent = 'Guardando…'; btn.disabled = true;
-  await saveConfigToFirestore({
-    appointmentDuration: Number(document.getElementById('adApptDuration').value),
-    firstSlot:           document.getElementById('adFirstSlot').value,
-    lastSlot:            document.getElementById('adLastSlot').value,
-    availableDays:       Array.from(
-      document.querySelectorAll('#dayCheckboxes input:checked')
-    ).map(cb => Number(cb.value))
-  });
-  btn.textContent = 'Guardar configuración'; btn.disabled = false;
-  showNotification('✅ Configuración de citas guardada en la nube.', 'success');
+  try {
+    await saveConfigToFirestore({
+      appointmentDuration: Number(document.getElementById('adApptDuration').value),
+      firstSlot:           document.getElementById('adFirstSlot').value,
+      lastSlot:            document.getElementById('adLastSlot').value,
+      availableDays:       Array.from(
+        document.querySelectorAll('#dayCheckboxes input:checked')
+      ).map(cb => Number(cb.value))
+    });
+    showNotification('✅ Configuración de citas guardada en Firestore.', 'success');
+  } catch (e) {
+    showNotification('❌ Error al guardar citas: ' + e.message, 'error');
+  } finally {
+    btn.textContent = 'Guardar configuración'; btn.disabled = false;
+  }
 });
 
 // ── RETRY PENDING SYNC ────────────────────────────

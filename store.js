@@ -1,18 +1,21 @@
 /**
  * DentalPro — store.js
- * Shared config — loads from Firestore, falls back to localStorage.
- * Imported by both app.js and cpanel.js
+ * Config compartido — Firestore es la fuente de verdad.
+ * localStorage solo se usa como caché de lectura rápida al inicio.
  */
 
-// ── localStorage fallback ─────────────────────────
-export const Store = {
+// ── Cache local (solo lectura rápida inicial) ─────
+const _cache = {
   get: (k, def = null) => {
     try { const v = localStorage.getItem('dp_' + k); return v ? JSON.parse(v) : def; } catch { return def; }
   },
   set: (k, v) => { try { localStorage.setItem('dp_' + k, JSON.stringify(v)); } catch {} }
 };
 
-// ── Default config values ─────────────────────────
+// Mantenemos Store exportado para compatibilidad con código existente
+export const Store = _cache;
+
+// ── Valores por defecto ───────────────────────────
 const DEFAULTS = {
   clinicName:          'DentalPro',
   slogan:              'Tu sonrisa, nuestra pasión',
@@ -27,10 +30,10 @@ const DEFAULTS = {
   availableDays:       [1, 2, 3, 4, 5, 6]
 };
 
-// Start with localStorage (instant, no async wait)
-export const config = Store.get('config', { ...DEFAULTS });
+// Config en memoria — se llena desde Firestore al cargar
+export const config = { ...DEFAULTS };
 
-/** Apply config to all [data-config] elements and CSS variables */
+/** Aplica config al DOM y variables CSS */
 export function applyConfig() {
   document.documentElement.style.setProperty('--primary', config.primaryColor);
   document.documentElement.style.setProperty('--accent',  config.accentColor);
@@ -44,36 +47,28 @@ export function applyConfig() {
 }
 
 /**
- * Load config from Firestore and merge into the shared config object.
- * Called once on page load. Updates the DOM after loading.
+ * Carga config desde Firestore (fuente de verdad).
+ * Si Firestore no tiene datos aún, usa los DEFAULTS.
+ * NO usa localStorage como fallback — lanza el error si falla.
  */
 export async function loadConfigFromFirestore() {
-  try {
-    const { fetchSiteConfig } = await import('./firebase.js');
-    const remote = await fetchSiteConfig();
-    if (remote) {
-      // Merge remote values into the shared config object (mutate in place)
-      Object.assign(config, remote);
-      // Also cache locally for offline use
-      Store.set('config', config);
-      applyConfig();
-    }
-  } catch (e) {
-    console.warn('Could not load config from Firestore, using local:', e.message);
+  const { fetchSiteConfig } = await import('./firebase.js');
+  const remote = await fetchSiteConfig();
+  if (remote) {
+    Object.assign(config, remote);
   }
+  // Siempre aplica (ya sea de Firestore o defaults)
+  applyConfig();
 }
 
 /**
- * Save config to both Firestore and localStorage.
+ * Guarda config en Firestore (fuente de verdad).
+ * Actualiza el objeto en memoria y el DOM inmediatamente.
+ * Lanza error si Firestore falla — no silencia.
  */
 export async function saveConfigToFirestore(updates) {
   Object.assign(config, updates);
-  Store.set('config', config);
-  applyConfig();
-  try {
-    const { saveSiteConfig } = await import('./firebase.js');
-    await saveSiteConfig(config);
-  } catch (e) {
-    console.warn('Could not save config to Firestore:', e.message);
-  }
+  applyConfig(); // Aplica visualmente de inmediato
+  const { saveSiteConfig } = await import('./firebase.js');
+  await saveSiteConfig(config); // Lanza si falla
 }

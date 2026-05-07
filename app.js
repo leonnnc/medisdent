@@ -97,11 +97,11 @@ async function initFirebase() {
     fbFetchPatients     = mod.fetchPatients;
     firebaseReady       = true;
 
-    // ── Load site config from Firestore ──
+    // ── Config desde Firestore (fuente de verdad) ──
     const { loadConfigFromFirestore } = await import('./store.js');
     await loadConfigFromFirestore();
 
-    // ── Load slides from Firestore ──
+    // ── Slides desde Firestore ──
     const remoteSlides = await mod.fetchSlides();
     if (remoteSlides && remoteSlides.length) {
       slides.length = 0;
@@ -109,7 +109,7 @@ async function initFirebase() {
       if (IS_SITE && typeof buildCarousel === 'function') buildCarousel();
     }
 
-    // ── Load staff from Firestore ──
+    // ── Staff desde Firestore ──
     const remoteStaff = await mod.fetchStaff();
     if (remoteStaff && remoteStaff.length) {
       staffMembers.length = 0;
@@ -117,23 +117,24 @@ async function initFirebase() {
       renderStaff();
     }
 
-    // ── Load appointments from Firestore ──
+    // ── Citas desde Firestore ──
     appointments = await fbFetchAppointments();
     renderCalendar();
     renderAgenda();
     renderAdminAgenda();
 
-    // Flush any appointments saved offline
+    // Sincronizar citas pendientes offline
     await flushPendingQueue();
     setInterval(flushPendingQueue, 60_000);
 
   } catch (e) {
-    console.warn('Firebase no disponible, usando localStorage:', e.message);
-    appointments = Store.get('appointments', []);
+    // Firestore falló — mostrar error claro, reintentar en 15s
+    console.error('Error conectando con Firestore:', e.message);
+    showNotification('⚠️ Error conectando con la base de datos. Reintentando…', 'error');
     renderCalendar();
     renderAgenda();
     renderAdminAgenda();
-    setTimeout(initFirebase, 30_000);
+    setTimeout(initFirebase, 15_000);
   }
 }
 
