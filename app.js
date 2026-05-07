@@ -947,32 +947,6 @@ if (IS_SITE) {
     });
   });
 
-  // ── SECTION DOT NAVIGATION ───────────────────────
-  const sections = Array.from(document.querySelectorAll('section, #footer'));
-  const dotsNav  = document.createElement('nav');
-  dotsNav.className = 'section-dots';
-  dotsNav.setAttribute('aria-label', 'Navegación de secciones');
-  sections.forEach((sec, i) => {
-    const dot = document.createElement('button');
-    dot.className = 'section-dot';
-    dot.setAttribute('aria-label', `Ir a sección ${i + 1}`);
-    dot.addEventListener('click', () => sec.scrollIntoView({ behavior: 'smooth' }));
-    dotsNav.appendChild(dot);
-  });
-  document.body.appendChild(dotsNav);
-
-  // Highlight active dot using IntersectionObserver
-  const dotEls = dotsNav.querySelectorAll('.section-dot');
-  const sectionObs = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const idx = sections.indexOf(entry.target);
-        dotEls.forEach((d, i) => d.classList.toggle('active', i === idx));
-      }
-    });
-  }, { threshold: 0.5 });
-  sections.forEach(sec => sectionObs.observe(sec));
-
   // ── CONTACT FORM ─────────────────────────────────
   const btnSend = document.querySelector('.btn-send');
   if (btnSend) btnSend.addEventListener('click', () => {
